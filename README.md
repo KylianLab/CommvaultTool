@@ -53,6 +53,9 @@ Copy-Item docker\tapetrack.env.dist docker\tapetrack.env
 $pw = Read-Host 'Mot de passe api_sa' -AsSecureString
 [IO.File]::WriteAllText("$PWD\docker\secrets\commvault_password", [Net.NetworkCredential]::new('', $pw).Password)
 New-Item -ItemType Directory -Force var\discovery, var\log | Out-Null
+
+# CA interne (AD CS) au format PEM, extraite du magasin Windows :
+.\docker\export-ca.ps1 -CommServe commserve.domaine.local
 ```
 
 Le README complet (déploiement Ubuntu/Nginx, worker systemd, synchro) sera rédigé dans les phases suivantes.
