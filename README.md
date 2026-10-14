@@ -46,4 +46,13 @@ docker compose run --rm discover -vv          # découverte -> ./var/discovery/
 - Le CommServe doit être joignable depuis WSL : vérifier avec `curl -v https://<commserve>/commandcenter/api/` dans WSL. Derrière un VPN, le mode réseau *mirrored* de WSL (`networkingMode=mirrored` dans `.wslconfig`) aide souvent.
 - Avec Podman : `podman compose` à la place de `docker compose`.
 
+Depuis **PowerShell** (Windows), les équivalents des commandes de préparation :
+
+```powershell
+Copy-Item docker\tapetrack.env.dist docker\tapetrack.env
+$pw = Read-Host 'Mot de passe api_sa' -AsSecureString
+[IO.File]::WriteAllText("$PWD\docker\secrets\commvault_password", [Net.NetworkCredential]::new('', $pw).Password)
+New-Item -ItemType Directory -Force var\discovery, var\log | Out-Null
+```
+
 Le README complet (déploiement Ubuntu/Nginx, worker systemd, synchro) sera rédigé dans les phases suivantes.

@@ -7,7 +7,9 @@ set -e
 for name in COMMVAULT_PASSWORD COMMVAULT_ACCESS_TOKEN COMMVAULT_REFRESH_TOKEN; do
     file="/run/secrets/$(echo "$name" | tr 'A-Z' 'a-z')"
     if [ -s "$file" ]; then
-        export "$name=$(cat "$file")"
+        # Files written on Windows may carry a UTF-8 BOM and CRLF line endings.
+        value="$(sed '1s/^\xEF\xBB\xBF//' "$file" | tr -d '\r')"
+        export "$name=$value"
     fi
 done
 
