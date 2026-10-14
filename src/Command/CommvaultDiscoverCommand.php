@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Commvault\CommvaultClientInterface;
 use App\Commvault\Discovery\DiscoveryCatalog;
+use App\Commvault\Exception\AuthenticationException;
 use App\Commvault\Discovery\DiscoveryResult;
 use App\Commvault\Discovery\DiscoveryRunner;
 use App\Commvault\Http\LoginTokenProvider;
@@ -32,6 +33,9 @@ final class CommvaultDiscoverCommand extends Command
         'barcode' => 'barcode',
         'job-id' => 'jobId',
         'client-id' => 'clientId',
+        'storage-policy-name' => 'storagePolicyName',
+        'copy-name' => 'copyName',
+        'library-name' => 'libraryName',
     ];
 
     public function __construct(
@@ -93,7 +97,7 @@ final class CommvaultDiscoverCommand extends Command
 
         if ($input->getOption('list')) {
             $io->table(['Key', 'Method', 'Path', 'Data'], array_map(
-                static fn ($p) => [$p->key, $p->method(), $p->path.([] === $p->query ? '' : '?'.http_build_query($p->query)), $p->data],
+                static fn ($p) => [$p->key, $p->isQCommand() ? 'QCMD' : $p->method(), $p->isQCommand() ? $p->body['command'] : $p->path.([] === $p->query ? '' : '?'.http_build_query($p->query)), $p->data],
                 $probes,
             ));
 
@@ -132,6 +136,10 @@ final class CommvaultDiscoverCommand extends Command
                     null !== $r->message ? ' - '.$r->message : '',
                 ));
             });
+        } catch (AuthenticationException $e) {
+            $io->error('Authentication failed, discovery aborted: '.$e->getMessage());
+
+            return Command::FAILURE;
         } finally {
             if ($this->tokenProvider instanceof LoginTokenProvider) {
                 $this->tokenProvider->logout();

@@ -30,4 +30,10 @@ interface CommvaultClientInterface
      * @param array<string, scalar|null> $query
      */
     public function query(string $path, array $body = [], array $query = []): CommvaultResponse;
+
+    /**
+     * Read-only QCommand through POST /ExecuteQCommand (form-encoded).
+     * Only allowlisted "qlist" / "qinfo" commands are accepted.
+     */
+    public function qcommand(string $command): CommvaultResponse;
 }

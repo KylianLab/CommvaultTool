@@ -22,7 +22,38 @@ final class IdExtractor
         'barcode' => ['barcode', 'barCode'],
         'jobId' => ['jobId', 'jobid'],
         'clientId' => ['clientId'],
+        'storagePolicyName' => ['storagePolicyName'],
+        'copyName' => ['copyName'],
+        'libraryName' => ['libraryName'],
     ];
+
+    /**
+     * Values found at a dot path, "*" matching every element of a list.
+     *
+     * @param array<mixed> $data
+     *
+     * @return list<string|int>
+     */
+    public static function atPath(array $data, string $path): array
+    {
+        $nodes = [$data];
+        foreach (explode('.', $path) as $segment) {
+            $next = [];
+            foreach ($nodes as $node) {
+                if (!\is_array($node)) {
+                    continue;
+                }
+                if ('*' === $segment) {
+                    array_push($next, ...array_values($node));
+                } elseif (\array_key_exists($segment, $node)) {
+                    $next[] = $node[$segment];
+                }
+            }
+            $nodes = $next;
+        }
+
+        return array_values(array_filter($nodes, static fn ($v) => (\is_int($v) || \is_string($v)) && '' !== $v && 0 !== $v && '0' !== $v));
+    }
 
     /**
      * @param array<mixed> $data

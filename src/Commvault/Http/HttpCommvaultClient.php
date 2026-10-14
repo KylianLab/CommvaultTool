@@ -46,23 +46,26 @@ final class HttpCommvaultClient implements CommvaultClientInterface
         return $this->send('POST', $path, $query, $body);
     }
 
+    public function qcommand(string $command): CommvaultResponse
+    {
+        return $this->send('POST', 'ExecuteQCommand', [], ['command' => $command], form: true);
+    }
+
     /**
      * @param array<string, scalar|null> $query
      * @param array<mixed>|null          $body
      */
-    private function send(string $method, string $path, array $query, ?array $body, bool $isRetry = false): CommvaultResponse
+    private function send(string $method, string $path, array $query, ?array $body, bool $isRetry = false, bool $form = false): CommvaultResponse
     {
-        $this->guard->assertAllowed($method, $path);
+        $this->guard->assertAllowed($method, $path, $body);
 
         $options = [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authtoken' => $this->tokenProvider->getToken(),
-            ],
+            'headers' => ['Accept' => 'application/json'] + $this->tokenProvider->authHeaders(),
             'query' => array_filter($query, static fn ($v) => null !== $v),
         ];
         if (null !== $body) {
-            $options['json'] = $body;
+            // QCommands are application/x-www-form-urlencoded, everything else JSON.
+            $options[$form ? 'body' : 'json'] = $body;
         }
 
         $start = microtime(true);
@@ -83,7 +86,7 @@ final class HttpCommvaultClient implements CommvaultClientInterface
             $this->commvaultLogger->info('Commvault answered 401 on {method} {path}, re-authenticating once.', ['method' => $method, 'path' => $path]);
             $this->tokenProvider->invalidate();
 
-            return $this->send($method, $path, $query, $body, true);
+            return $this->send($method, $path, $query, $body, true, $form);
         }
 
         $this->commvaultLogger->log($status >= 400 ? 'warning' : 'debug', 'Commvault {method} {path} -> {status} ({duration} ms)', [

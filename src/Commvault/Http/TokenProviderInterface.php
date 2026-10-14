@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Commvault\Http;
 
 /**
- * Supplies the value of the "Authtoken" header.
+ * Supplies the authentication header(s) sent with every API call:
+ * "Authtoken: QSDK ..." (POST /Login) or "Authorization: Bearer ..." (API access token).
  */
 interface TokenProviderInterface
 {
-    public function getToken(): string;
+    /**
+     * @return array<string, string>
+     */
+    public function authHeaders(): array;
 
     /**
      * Called when Commvault rejected the current token (HTTP 401). The next
-     * getToken() call must obtain a fresh one (re-login or renewal).
+     * authHeaders() call must obtain a fresh one (re-login or renewal).
      */
     public function invalidate(): void;
 

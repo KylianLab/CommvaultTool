@@ -47,8 +47,10 @@ services:
     App\Commvault\Http\AccessTokenProvider:
         arguments:
             $commvaultHttpClient: '@commvault.http_client'
-            $accessToken: '%env(default:commvault.empty:COMMVAULT_ACCESS_TOKEN)%'
-            $refreshToken: '%env(default:commvault.empty:COMMVAULT_REFRESH_TOKEN)%'
+            # latest renewed pair (refresh tokens are single-use), mode 0600
+            $stateFile: '%kernel.project_dir%/var/commvault/access-token.json'
+            $initialAccessToken: '%env(default:commvault.empty:COMMVAULT_ACCESS_TOKEN)%'
+            $initialRefreshToken: '%env(default:commvault.empty:COMMVAULT_REFRESH_TOKEN)%'
 
     App\Commvault\Http\TokenProviderInterface:
         factory: ['App\Commvault\Http\TokenProviderSelector', 'select']

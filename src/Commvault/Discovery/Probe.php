@@ -12,13 +12,18 @@ namespace App\Commvault\Discovery;
  * {clientId}: they are resolved from the IDs found in previous responses
  * (or forced on the command line). A probe whose placeholders cannot be
  * resolved is skipped.
+ *
+ * $extract tells where to find IDs that generic key names would miss
+ * (e.g. "tapeList.*.id" holds library IDs): placeholder => list of dot paths,
+ * "*" matching any list index.
  */
 final readonly class Probe
 {
     /**
      * @param string                     $data  which business data this probe is expected to provide (for the report)
      * @param array<string, scalar|null> $query
-     * @param array<mixed>|null          $body  non-null => POST (must be allowlisted by ReadOnlyGuard)
+     * @param array<mixed>|null          $body    non-null => POST (must be allowlisted by ReadOnlyGuard)
+     * @param array<string, list<string>> $extract
      */
     public function __construct(
         public string $key,
@@ -26,7 +31,18 @@ final readonly class Probe
         public string $path,
         public array $query = [],
         public ?array $body = null,
+        public array $extract = [],
     ) {
+    }
+
+    public static function qcommand(string $key, string $data, string $command, array $extract = []): self
+    {
+        return new self($key, $data, 'ExecuteQCommand', [], ['command' => $command], $extract);
+    }
+
+    public function isQCommand(): bool
+    {
+        return 'ExecuteQCommand' === $this->path;
     }
 
     public function method(): string
@@ -65,6 +81,6 @@ final readonly class Probe
             return preg_replace_callback('/\{([A-Za-z]+)\}/', static fn ($m) => (string) ($values[$m[1]] ?? $m[0]), $v);
         };
 
-        return new self($this->key, $this->data, $replace($this->path), $replace($this->query), null === $this->body ? null : $replace($this->body));
+        return new self($this->key, $this->data, $replace($this->path), $replace($this->query), null === $this->body ? null : $replace($this->body), $this->extract);
     }
 }

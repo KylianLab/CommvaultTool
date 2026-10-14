@@ -44,4 +44,37 @@ final class ReadOnlyGuardTest extends TestCase
         yield ['DELETE', '/Job/42'];
         yield ['PATCH', '/Login'];
     }
+
+    #[DataProvider('qcommands')]
+    public function testQCommands(string $command, bool $allowed): void
+    {
+        if (!$allowed) {
+            $this->expectException(ReadOnlyViolationException::class);
+        }
+        (new ReadOnlyGuard())->assertAllowed('POST', 'ExecuteQCommand', ['command' => $command]);
+        $this->addToAssertionCount(1);
+    }
+
+    /** @return iterable<array{string, bool}> */
+    public static function qcommands(): iterable
+    {
+        yield ['qlist media -j 42', true];
+        yield ['QLIST MEDIA -sp "Online 1" -spc "Primary"', true];
+        yield ['qinfo media -b K00067L8', true];
+        yield ["qoperation execscript -sn QS_JobsinSPCopy -si @i_policyName='Online 1'", true];
+        yield ['qlist mediaagent', false];
+        yield ['qoperation execscript -sn RetainJobsOnMedia', false];
+        yield ['qoperation export -b K00067L8', false];
+        yield ['qdelete job -j 1', false];
+        yield ['qlist media -j 1 ; qdelete job -j 1', false];
+        yield ["qlist media -j 1
+qdelete job -j 1", false];
+        yield ['', false];
+    }
+
+    public function testExecuteQCommandWithoutCommandIsRefused(): void
+    {
+        $this->expectException(ReadOnlyViolationException::class);
+        (new ReadOnlyGuard())->assertAllowed('POST', 'ExecuteQCommand', ['xml' => '<x/>']);
+    }
 }

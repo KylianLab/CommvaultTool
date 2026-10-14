@@ -42,15 +42,20 @@ final class FixtureCommvaultClient implements CommvaultClientInterface
         return $this->load('POST', $path, $query, $body);
     }
 
+    public function qcommand(string $command): CommvaultResponse
+    {
+        return $this->load('POST', 'ExecuteQCommand', [], ['command' => $command], strict: true);
+    }
+
     /**
      * @param array<string, scalar|null> $query
      * @param array<mixed>|null          $body
      */
-    private function load(string $method, string $path, array $query, ?array $body): CommvaultResponse
+    private function load(string $method, string $path, array $query, ?array $body, bool $strict = false): CommvaultResponse
     {
-        $this->guard->assertAllowed($method, $path);
+        $this->guard->assertAllowed($method, $path, $body);
 
-        $candidates = array_unique([
+        $candidates = $strict ? [FixtureNaming::fileName($method, $path, $query, $body)] : array_unique([
             FixtureNaming::fileName($method, $path, $query, $body),
             FixtureNaming::fileName($method, $path, $query),
             FixtureNaming::fileName($method, $path),

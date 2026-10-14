@@ -1,0 +1,4 @@
+{"mediaDetailsList": [
+  {"mediaId": 501, "barcode": "K00067L8", "status": "Full Media", "libraryId": 3, "slot": {"id": 12, "name": "12"}, "storagePolicy": {"id": 11, "name": "Online 1"}, "storagePolicyCopy": {"id": 21, "name": "Primary"}, "lastWriteTime": 1764351600, "retainDataUntil": 1786320000},
+  {"mediaId": 502, "barcode": "K00057L8", "status": "Appendable Media", "libraryId": 3, "slot": {"id": 13, "name": "13"}, "storagePolicy": {"id": 11, "name": "Online 1"}, "storagePolicyCopy": {"id": 21, "name": "Primary"}, "lastWriteTime": 1765364220, "retainDataUntil": 1786320000}
+]}

@@ -1,0 +1,3 @@
+{"storagePolicyName": "Online 2", "copy": [
+  {"copyType": 100, "isDefault": 1, "StoragePolicyCopy": {"copyId": 31, "copyName": "Primary", "storagePolicyName": "Online 2"}}
+]}

@@ -27,9 +27,9 @@ final class LoginTokenProvider implements TokenProviderInterface
     ) {
     }
 
-    public function getToken(): string
+    public function authHeaders(): array
     {
-        return $this->token ??= $this->login();
+        return ['Authtoken' => $this->token ??= $this->login()];
     }
 
     public function invalidate(): void
@@ -78,6 +78,8 @@ final class LoginTokenProvider implements TokenProviderInterface
             $status = $response->getStatusCode();
             $data = $response->toArray(false);
         } catch (ExceptionInterface $e) {
+            $this->commvaultLogger->error('Commvault login failed for {user}: {error}', ['user' => $this->username, 'error' => $e->getMessage()]);
+
             throw new AuthenticationException('Commvault login failed: '.$e->getMessage(), 0, $e);
         }
 
