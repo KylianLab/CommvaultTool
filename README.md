@@ -4,7 +4,13 @@ Suivi des tapes Commvault : quoi sortir de la TL, quoi imprimer, où ranger, quo
 
 Stack : PHP 8.4, Symfony 7.4 LTS, Doctrine/MariaDB, Twig + Symfony UX (phases suivantes).
 
-## État : Phase 0 (découverte de l'API Commvault)
+## État
+
+- **Phase 0, découverte de l'API Commvault : terminée.** Voir [`docs/commvault-mapping.md`](docs/commvault-mapping.md).
+- **Phase 2, modèle de données et synchronisation : terminée.** Voir [`docs/eject-rules.md`](docs/eject-rules.md) et la section « Synchronisation » ci-dessous.
+- Prochaine étape : Phase 3, tableau de bord, vue TL et vue armoires.
+
+## Phase 0 : découverte de l'API Commvault
 
 - `src/Commvault/` : client REST **lecture seule**
   - `HttpCommvaultClient` : Symfony HttpClient, TLS toujours vérifié, CA interne via `COMMVAULT_CA_BUNDLE`, retry, ré-authentification sur 401, journalisation dans `var/log/commvault-*.log` sans secrets ;
@@ -58,5 +64,45 @@ New-Item -ItemType Directory -Force var\discovery, var\log | Out-Null
 # CA interne (AD CS) au format PEM, extraite du magasin Windows :
 .\docker\export-ca.ps1 -CommServe commserve.domaine.local
 ```
+
+## Synchronisation (Phase 2)
+
+L'interface ne lit jamais Commvault en direct : `app:sync` (ou le worker) lit Commvault en **lecture seule** et met à jour MariaDB.
+
+```bash
+php bin/console doctrine:migrations:migrate     # schéma MariaDB
+php bin/console app:sync                        # synchro immédiate (affiche les compteurs)
+php bin/console messenger:consume scheduler_default async -vv   # worker : synchro planifiée + « Synchroniser maintenant »
+```
+
+Avec `COMMVAULT_CLIENT=fake`, la synchro lit les fixtures de démo `tests/Fixtures/commvault/demo/`. Elles reprennent le format exact du CommServe, la fiche réelle Online N et un job en cours, en date de référence du 14/10/2026.
+
+### Planification : Symfony Scheduler + Messenger plutôt que cron
+
+- Le bouton « Synchroniser maintenant » doit rendre la main immédiatement. Il envoie donc un message `SyncCommvault` dans la file Messenger (transport Doctrine, dans MariaDB, sans infrastructure supplémentaire). Le **même worker** exécute aussi la synchro périodique (`src/Schedule.php`, toutes les `TAPETRACK_SYNC_INTERVAL`) : un seul chemin d'exécution.
+- Un verrou (`symfony/lock`) empêche deux synchros simultanées. Un run concurrent est enregistré comme « ignoré ».
+- Le worker est un service systemd : [`deploy/systemd/tapetrack-worker.service`](deploy/systemd/tapetrack-worker.service). Il redémarre automatiquement et se recycle toutes les heures.
+- Une entrée cron `app:sync` reste possible en secours, mais elle ne traiterait pas le bouton « Synchroniser maintenant ».
+
+Chaque run est historisé dans `sync_run` : statut, durée, compteurs, avertissements et erreur. C'est ce que lira l'écran « dernière synchro ».
+
+### Configuration (`.env.local`)
+
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `DATABASE_URL` | MariaDB locale | **En production : `secrets:set DATABASE_URL`** |
+| `TAPETRACK_MANAGED_LIBRARIES` | `36` | IDs Commvault des bibliothèques gérées (36 = IBM VSP) |
+| `TAPETRACK_DEFAULT_DRAWERS` | `36=1:1-20,2:21-40,3:41-60;26=4:1-20` | Tiroirs créés à la première synchro (ensuite modifiables dans l'admin) |
+| `TAPETRACK_JOB_WINDOW_DAYS` | `730` | Profondeur de lecture des jobs par copie |
+| `TAPETRACK_CYCLE_GROUPING` | `retention` | `retention` (copie + date de rétention) ou `full_to_full` |
+| `TAPETRACK_SYNC_INTERVAL` | `15 minutes` | Période de la synchro automatique |
+
+### Tests
+
+```bash
+vendor/bin/phpunit          # 87 tests : client Commvault, règles métier, synchro sur SQLite
+```
+
+Les migrations ont été validées sur MariaDB 11.4.
 
 Le README complet (déploiement Ubuntu/Nginx, worker systemd, synchro) sera rédigé dans les phases suivantes.

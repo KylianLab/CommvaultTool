@@ -5,8 +5,11 @@ Application de suivi des tapes Commvault de la KBR. Le cahier des charges comple
 ## État
 
 - **Phase 0 (découverte de l'API) : terminée.** Le mapping confirmé sur le CommServe de production et les décisions métier sont dans `docs/commvault-mapping.md`, sections 8 à 11. **À lire avant toute modification touchant à Commvault.**
-- Prochaine étape : **Phase 2**, modèle Doctrine + synchronisation, testée sur des fixtures JSON. Viendront ensuite :
-  - tableau de bord, vue TL et vue armoires ;
+- **Phase 2 (modèle + synchro) : terminée.**
+  - Entités : `src/Entity`. Règles métier : `src/Domain`, documentées dans `docs/eject-rules.md`.
+  - Synchro : `src/Sync/CommvaultSynchronizer.php`, commande `app:sync`, worker Messenger avec Scheduler.
+  - Fixtures de démo : `tests/Fixtures/commvault/demo` (générées par `generate.py`, date de référence 14/10/2026).
+- Prochaine étape : **Phase 3**, tableau de bord, vue TL et vue armoires. Viendront ensuite :
   - sessions de sortie et de retour ;
   - impression des fiches ;
   - admin et authentification ;
@@ -37,7 +40,9 @@ Application de suivi des tapes Commvault de la KBR. Le cahier des charges comple
 ## Commandes
 
 ```bash
-vendor/bin/phpunit                                   # tests (client fake, sans réseau)
+vendor/bin/phpunit                                   # tests (client fake, SQLite, sans réseau) - PHP 8.4 requis
+php bin/console doctrine:migrations:migrate          # schéma MariaDB
+php bin/console app:sync                             # synchro Commvault -> MariaDB
 php bin/console app:commvault:discover --list        # appels de découverte
 php bin/console app:commvault:discover -vv           # découverte -> var/discovery/
 php bin/console app:commvault:discovery-summary      # structure des dumps -> var/discovery/_schema.md

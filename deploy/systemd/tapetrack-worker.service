@@ -1,0 +1,25 @@
+# /etc/systemd/system/tapetrack-worker.service
+# Runs the scheduled Commvault synchronisation (Symfony Scheduler) and the
+# "Synchroniser maintenant" requests (Messenger "async" transport).
+#   systemctl daemon-reload && systemctl enable --now tapetrack-worker
+[Unit]
+Description=TapeTrack Messenger worker (Commvault sync)
+After=network-online.target mariadb.service
+Wants=network-online.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/tapetrack
+Environment=APP_ENV=prod
+# The worker exits after 1 h or 128 MB so code / config changes are picked up; systemd restarts it.
+ExecStart=/usr/bin/php /var/www/tapetrack/bin/console messenger:consume scheduler_default async --time-limit=3600 --memory-limit=128M -vv
+Restart=always
+RestartSec=5
+# hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
