@@ -207,9 +207,79 @@ Découverte lancée contre le CommServe de production en 11.40, avec le compte `
 4. **Date « Retention » de la fiche** : on prend `retainDataUntil` de la tape, avec une alerte si cette date diverge de la rétention du job Full du cycle.
 5. **Cycles** : chaque client a sa propre schedule policy. Il n'existe donc pas un unique Full par copie qui ouvrirait le cycle (voir la question 1 ci-dessous).
 
-## 10. Questions ouvertes
+## 10. Mapping confirmé sur le CommServe
 
-1. **Regroupement en fiches** : comme les clients ont des Full à des dates différentes, faut-il regrouper par **date de rétention des tapes** (copie + rétention) ? La date « BackUp » serait alors celle du premier Full du groupe. À confirmer après avoir vu les jobs de `SP_VSP_Online-N` : combien de clients et de subclients.
-2. **Statuts média** : valeurs réelles à lire dans `_schema.md`.
-3. **Slots et tiroirs** : comment les slots de la partition `IBM VSP` se répartissent-ils sur les 4 tiroirs physiques ? Numérotation propre à la partition, ou numéros de la TL physique ?
-4. **Relation job ↔ tape** : les QCommands sont indisponibles par l'API. Il faut regarder si `JobDetails` ou les listes de médias donnent ce lien, sinon passer par l'approximation copie + dates.
+Source : `_schema.md` du 14/10/2026, avec les noms de clients masqués. **Ce mapping remplace les hypothèses des sections 2 à 5.**
+
+### Médias (tapes) : la source principale
+
+Endpoint : `GET /V4/Library/36/Media?filterMediaType=ALL&isExported=false` (tapes dans la TL), puis le même avec `isExported=true` (tapes exportées).
+
+Pour IBM VSP : 60 tapes dans la TL et 110 exportées. Le total de 170 correspond à `tapeLibSummary.numOfMedia`.
+
+| Donnée TapeTrack | Chemin JSON (`mediaDetailsList[]…`) | Remarque |
+|---|---|---|
+| ID Commvault (upsert) | `mediaId` | |
+| Barcode | `barcode` | `K00037L8`, ou `CLN001CU` pour une cartouche de nettoyage |
+| Statut Commvault | `status` | `Full Media`, `Appendable Media`, `Active Media`, `Aged Media`, `Spare Media`, `Bad Media`, `Cleaning Media` |
+| Dans la TL ? | `isExported` (false = dans la TL) | |
+| **Slot** | `slot.name` = `"slot 14"` (numéro extrait), `slot.id` = ID interne | numérotation à partir de 1 dans chaque bibliothèque logique ; vaut `""` / 0 hors TL |
+| Dans un lecteur | `drive.name` / `drive.id` | `IBM ULT3580-HH9_1`… ; 0 si la tape n'est pas montée |
+| Storage policy | `storagePolicy.{id,name}` | ex. 138 `SP_VSP_Online-N` ; 0 pour une tape scratch |
+| **Copie (→ boîte)** | `storagePolicyCopy.{id,name}` | ex. 167 `Master` |
+| **LastWrite** | `lastWriteTime` (epoch) | |
+| **Rétention** | `retainDataUntil` (epoch) | 0 pour une tape aged ou spare |
+| Pool | `spareGroup.{id,name}`, `spareGroupType`, `isInMediaGroup` | `Default Scratch`, `LTO9`, `Cleaning Media` |
+| Type | `mediaType.name` | `ULTRIUM V8` / `ULTRIUM V9` |
+| Volume | `storedDataBytes` | |
+| Attributs | `guiMediaAttribute` | masque de bits non documenté, non utilisé |
+
+`GET /V4/Library/{id}/Slot` est inutile : le slot est déjà dans la liste des médias.
+
+### Bibliothèque et lecteurs
+
+- `GET /Library/36` → `libraryInfo.tapeLibSummary` : `numOfRegSlots` (60), les compteurs, `isOnline`.
+- `libraryInfo.DriveList[]` donne `{barcode, mediaId, jobIds, mountStatus}`, c'est-à-dire **la tape montée et les jobs qui l'utilisent**. C'est la source de la règle « une tape avec un job en cours n'est jamais à sortir ».
+
+### Storage policies et copies
+
+- `GET /StoragePolicy?getAll=TRUE` → `policies[].{storagePolicyId,storagePolicyName}` (132 policies).
+- `GET /StoragePolicy/{id}` → `copy[].StoragePolicyCopy.{copyId,copyName}`, `copy[].library.{libraryId,libraryName}`, `copy[].retentionRules.{retainBackupDataForDays,retainBackupDataForCycles}`, `copy[].isDefault`, `copy[].copyPrecedence`, `copy[].copyType`.
+- Les `Global_SP_VSP_*` sont des **storage pools** (`libraryInfo.storagePoolList`) vers lesquels écrivent les copies `Master` des `SP_VSP_*`. L'unité de rangement reste la **copie** de la storage policy, avec l'ID que portent les médias.
+
+### Jobs
+
+- `GET /V4/Plan/BackupDestination/{copyId}/Jobs?view=custom&startTime&endTime&agedData=2` → `jobs[]` :
+  - identification : `jobId`, **`jobType`** (`Full`… : c'est le niveau de backup, ce qui remplace le filtre `backupLvl` ignoré) ;
+  - dates : `startTime`, `endTime`, `copiedTime` ;
+  - rétention : **`retainUntil`** (epoch), `isAged`, `retentionReason`, `strRetainedBy` ;
+  - état et origine : `status` (`Available`…), `server.{id,name}` (client), `subClient.{id,name}`, `backupSet`.
+- `GET /Job?completedJobLookupTime&jobCategory=Active|All` → `jobs[].jobSummary.{jobId,status,backupLevelName,jobStartTime,jobEndTime,storagePolicy,subclient.clientId,plan.planName,retainUntil}`. Sert à repérer les **jobs en cours**.
+- `GET /Job/{id}/AdvancedDetails?infoType=1` → `copyRetentionInfoList[].retentionDays`. Malgré son nom, ce champ est un **epoch** et non un nombre de jours.
+- `POST /JobDetails` ne contient **pas** la liste des médias.
+
+### Relation job ↔ tape
+
+**Elle n'est pas disponible par l'API.** Ni `JobDetails`, ni les listes de médias ne la donnent, et les QCommands ne répondent pas sous `/commandcenter/api`.
+
+La relation sera **reconstruite** à partir de quatre éléments :
+- la copie de la tape (`storagePolicyCopy.id`) ;
+- la rétention de la tape (`retainDataUntil`) ;
+- la rétention de chaque job sur cette copie (`retainUntil`) ;
+- la fenêtre temporelle couverte par la tape (`lastWriteTime`).
+
+L'UI présentera cette relation comme **déduite**.
+
+### Fiche « backup » (cycle)
+
+Sur l'exemple réel, toutes les tapes d'une fiche partagent la même rétention. Les fiches seront donc regroupées par **(copie, `retainDataUntil` au jour près)**.
+
+- Date « Retention » : celle des tapes.
+- Date « BackUp » : celle du premier job `Full` de la copie dont `retainUntil` tombe le même jour. Si aucun job ne correspond, la case reste vide et une alerte s'affiche.
+- Une tape dont la rétention ne correspond à aucune fiche existante est signalée comme incohérente.
+
+## 11. Questions ouvertes
+
+1. **`Active Media` / `Appendable Media`** : VSP compte 33 tapes « Active » pour seulement 4 lecteurs, donc « Active » ne veut pas dire « en cours d'écriture ». Quelle différence faites-vous entre les deux ? Les deux sont-elles « non pleines, à laisser dans la TL » ?
+2. **Tiroirs** : quelles plages de slots de la bibliothèque VSP (1 à 60) correspondent à chacun des 4 tiroirs ? La valeur sera saisie dans l'admin, mais une valeur par défaut serait utile.
+3. **Fiche** : faut-il une fiche par (copie, date de rétention), même si plusieurs clients y ont écrit ?
