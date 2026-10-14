@@ -41,7 +41,7 @@ final class DiscoveryRunnerTest extends TestCase
     public function testDependentProbesGetConsistentIdCombinations(): void
     {
         $results = $this->discover([
-            new Probe('library.tape_list', '', 'V4/Storage/Tape', extract: ['libraryId' => ['tapeList.*.id']]),
+            new Probe('library.tape_list', '', 'V4/Storage/Tape', extract: ['libraryId' => ['tapeStorage.*.id']]),
             new Probe('media.in_library', '', 'V4/Library/{libraryId}/Media', ['filterMediaType' => 'ALL', 'isExported' => 'false']),
             new Probe('sp.list', '', 'StoragePolicy', ['getAll' => 'TRUE']),
             new Probe('sp.detail', '', 'StoragePolicy/{storagePolicyId}', extract: ['copyId' => ['copy.*.StoragePolicyCopy.copyId']]),
@@ -78,7 +78,7 @@ final class DiscoveryRunnerTest extends TestCase
         $this->discover([new Probe('library.tape_list', '', 'V4/Storage/Tape')]);
 
         $dump = json_decode((string) file_get_contents($this->outputDir.'/GET_V4_Storage_Tape.json'), true);
-        self::assertSame('TL-IBM', $dump['tapeList'][0]['name']);
+        self::assertSame('TL-IBM', $dump['tapeStorage'][0]['name']);
     }
 
     public function testProbeWithoutIdsIsSkipped(): void
@@ -104,7 +104,8 @@ final class DiscoveryRunnerTest extends TestCase
     {
         $guard = new \App\Commvault\ReadOnlyGuard();
         foreach (DiscoveryCatalog::probes(new \DateTimeImmutable('-30 days')) as $probe) {
-            $guard->assertAllowed($probe->method(), $probe->path, $probe->body);
+            $path = 'QCommand' === $probe->path ? 'QCommand/'.rawurlencode($probe->body['command']) : $probe->path;
+            $guard->assertAllowed($probe->method(), $path, 'QCommand' === $probe->path ? null : $probe->body);
         }
         $this->addToAssertionCount(1);
     }

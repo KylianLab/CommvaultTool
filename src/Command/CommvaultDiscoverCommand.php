@@ -36,6 +36,7 @@ final class CommvaultDiscoverCommand extends Command
         'storage-policy-name' => 'storagePolicyName',
         'copy-name' => 'copyName',
         'library-name' => 'libraryName',
+        'location-id' => 'locationId',
     ];
 
     public function __construct(

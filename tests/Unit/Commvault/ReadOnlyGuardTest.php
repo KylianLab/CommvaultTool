@@ -72,6 +72,15 @@ qdelete job -j 1", false];
         yield ['', false];
     }
 
+    public function testQCommandV2PathIsCheckedToo(): void
+    {
+        $guard = new ReadOnlyGuard();
+        $guard->assertAllowed('POST', 'QCommand/'.rawurlencode('qlist media -j 42'));
+
+        $this->expectException(ReadOnlyViolationException::class);
+        $guard->assertAllowed('POST', 'QCommand/'.rawurlencode('qdelete job -j 42'));
+    }
+
     public function testExecuteQCommandWithoutCommandIsRefused(): void
     {
         $this->expectException(ReadOnlyViolationException::class);

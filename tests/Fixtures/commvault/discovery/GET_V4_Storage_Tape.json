@@ -1,1 +1,1 @@
-{"tapeList": [{"id": 3, "name": "TL-IBM", "storageType": "TAPE", "status": "Online"}]}
+{"tapeStorage": [{"id": 3, "name": "TL-IBM", "storageType": "TAPE", "status": "Ready", "manufacturer": "IBM", "model": "3573-TL", "company": {"id": 0, "name": ""}}]}

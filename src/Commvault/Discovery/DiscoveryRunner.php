@@ -70,10 +70,10 @@ final class DiscoveryRunner
     private function call(Probe $probe, array $bindings, string $outputDir): DiscoveryResult
     {
         $method = $probe->method();
-        $label = $probe->isQCommand() ? 'ExecuteQCommand: '.$probe->body['command'] : $probe->path.([] === $probe->query ? '' : '?'.http_build_query($probe->query));
+        $label = $probe->isQCommand() ? $probe->path.': '.$probe->body['command'] : $probe->path.([] === $probe->query ? '' : '?'.http_build_query($probe->query));
         try {
             $response = match (true) {
-                $probe->isQCommand() => $this->client->qcommand((string) $probe->body['command']),
+                $probe->isQCommand() => $this->client->qcommand((string) $probe->body['command'], 'QCommand' === $probe->path),
                 null === $probe->body => $this->client->get($probe->path, $probe->query),
                 default => $this->client->query($probe->path, $probe->body, $probe->query),
             };

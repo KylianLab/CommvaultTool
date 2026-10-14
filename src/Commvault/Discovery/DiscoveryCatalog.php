@@ -35,10 +35,10 @@ final class DiscoveryCatalog
             new Probe('auth.whoami', 'identity of the API account (token check)', 'WhoAmI'),
 
             // --- Tape libraries ----------------------------------------------------------
-            new Probe('library.tape_list', 'tape libraries (V4)', 'V4/Storage/Tape', extract: ['libraryId' => ['tapeList.*.id'], 'libraryName' => ['tapeList.*.name']]),
+            new Probe('library.tape_list', 'tape libraries (V4)', 'V4/Storage/Tape', extract: ['libraryId' => ['tapeStorage.*.id', 'tapeList.*.id'], 'libraryName' => ['tapeStorage.*.name', 'tapeList.*.name']]),
             new Probe('library.tape_detail', 'tape library details, drives (+ loaded barcode)', 'V4/Storage/Tape/{libraryId}'),
             new Probe('library.tape_media_counts', 'media counters per library', 'V4/Storage/Tape/{libraryId}/Media'),
-            new Probe('library.export_locations', 'export locations (vault / off-site, isTransit)', 'V4/Storage/Tape/Locations'),
+            new Probe('library.export_locations', 'export locations (vault / off-site, isTransit)', 'V4/Storage/Tape/Locations', extract: ['locationId' => ['locations.*.id']]),
             new Probe('library.list_legacy', 'all libraries (disk + tape, legacy)', 'Library'),
             new Probe('library.detail_legacy', 'library details (legacy, libraryType, tapeLibSummary)', 'Library/{libraryId}'),
 
@@ -48,7 +48,7 @@ final class DiscoveryCatalog
             new Probe('media.aged', 'aged tapes (candidates to come back)', 'V4/Library/{libraryId}/Media', ['filterMediaType' => 'AGED', 'isExported' => 'true']),
             new Probe('media.slots', 'regular slots (slot <-> media, element address?)', 'V4/Library/{libraryId}/Slot', ['slotType' => 'REGULAR_SLOT']),
             new Probe('media.mail_slots', 'I/E (mail) slots', 'V4/Library/{libraryId}/Slot', ['slotType' => 'MAIL_SLOT']),
-            new Probe('media.vault_tracker', 'Vault Tracker media (location, dueBackForReuseOn)', 'V4/VaultTracker/Media'),
+            new Probe('media.vault_tracker', 'Vault Tracker media at an export location (dueBackForReuseOn)', 'V4/VaultTracker/Media', ['locationId' => '{locationId}']),
 
             // --- Storage policies & copies ----------------------------------------------
             new Probe('sp.list', 'storage policies (legacy)', 'StoragePolicy', ['getAll' => 'TRUE']),
@@ -78,6 +78,10 @@ final class DiscoveryCatalog
             Probe::qcommand('qcmd.media_of_copy', 'tapes of a storage policy copy', 'qlist media -sp "{storagePolicyName}" -spc "{copyName}"'),
             Probe::qcommand('qcmd.media_of_library', 'tapes of a library', 'qlist media -l "{libraryName}"'),
             Probe::qcommand('qcmd.media_info', 'one tape details', 'qinfo media -b {barcode}'),
+            // Same commands through the v2 endpoint (POST /QCommand/<command>), in case
+            // /ExecuteQCommand is not exposed under /commandcenter/api.
+            Probe::qcommand('qcmd2.media_of_job', 'tapes used by a job (QCommand v2)', 'qlist media -j {jobId}', v2: true),
+            Probe::qcommand('qcmd2.media_of_library', 'tapes of a library (QCommand v2)', 'qlist media -l "{libraryName}"', v2: true),
             Probe::qcommand('qcmd.jobs_in_copy', 'jobs in a copy (reporting stored procedure)', 'qoperation execscript -sn QS_JobsinSPCopy -si @i_policyName=\'{storagePolicyName}\' -si @i_copyName=\'{copyName}\''),
         ];
     }

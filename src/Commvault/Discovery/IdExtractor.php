@@ -25,6 +25,7 @@ final class IdExtractor
         'storagePolicyName' => ['storagePolicyName'],
         'copyName' => ['copyName'],
         'libraryName' => ['libraryName'],
+        'locationId' => ['locationId'],
     ];
 
     /**

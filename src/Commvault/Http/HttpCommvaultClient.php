@@ -46,8 +46,15 @@ final class HttpCommvaultClient implements CommvaultClientInterface
         return $this->send('POST', $path, $query, $body);
     }
 
-    public function qcommand(string $command): CommvaultResponse
+    public function qcommand(string $command, bool $v2 = false): CommvaultResponse
     {
+        if ($v2) {
+            // The command travels in the path; check it like an ExecuteQCommand body.
+            $this->guard->assertAllowed('POST', 'ExecuteQCommand', ['command' => $command]);
+
+            return $this->send('POST', 'QCommand/'.rawurlencode($command), [], null);
+        }
+
         return $this->send('POST', 'ExecuteQCommand', [], ['command' => $command], form: true);
     }
 

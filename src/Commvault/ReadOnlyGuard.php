@@ -74,6 +74,16 @@ final class ReadOnlyGuard
         $method = strtoupper($method);
         $normalized = self::normalize($path);
 
+        if (str_starts_with($normalized, 'qcommand/')) {
+            $command = rawurldecode(substr(trim(explode('?', $path, 2)[0], '/'), \strlen('qcommand/')));
+            if ('POST' !== $method) {
+                throw new ReadOnlyViolationException('Refusing QCommand with method '.$method.'.');
+            }
+            $this->assertQCommandAllowed($command);
+
+            return;
+        }
+
         if ('executeqcommand' === $normalized) {
             $command = $body['command'] ?? null;
             if ('POST' !== $method || !\is_string($command)) {

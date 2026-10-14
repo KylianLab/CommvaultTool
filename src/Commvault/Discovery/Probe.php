@@ -35,14 +35,17 @@ final readonly class Probe
     ) {
     }
 
-    public static function qcommand(string $key, string $data, string $command, array $extract = []): self
+    /**
+     * @param bool $v2 POST /QCommand/<command> instead of POST /ExecuteQCommand
+     */
+    public static function qcommand(string $key, string $data, string $command, array $extract = [], bool $v2 = false): self
     {
-        return new self($key, $data, 'ExecuteQCommand', [], ['command' => $command], $extract);
+        return new self($key, $data, $v2 ? 'QCommand' : 'ExecuteQCommand', [], ['command' => $command], $extract);
     }
 
     public function isQCommand(): bool
     {
-        return 'ExecuteQCommand' === $this->path;
+        return \in_array($this->path, ['ExecuteQCommand', 'QCommand'], true);
     }
 
     public function method(): string

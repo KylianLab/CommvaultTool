@@ -101,12 +101,27 @@ final class HttpCommvaultClientTest extends TestCase
         self::assertSame('command=qlist+media+-j+42', $this->requests[1]['options']['body']);
     }
 
+    public function testQCommandV2PutsTheCommandInThePath(): void
+    {
+        $client = $this->client([self::json(['token' => 'QSDK abc']), new MockResponse('BARCODE ...')]);
+
+        $client->qcommand('qlist media -j 42', true);
+
+        self::assertSame('POST', $this->requests[1]['method']);
+        self::assertSame('https://cs.example.local/commandcenter/api/QCommand/qlist%20media%20-j%2042', $this->requests[1]['url']);
+    }
+
     public function testWriteRequestsNeverLeave(): void
     {
         $client = $this->client([]);
 
         try {
             $client->qcommand('qoperation export -b K00067L8');
+            self::fail('expected exception');
+        } catch (ReadOnlyViolationException) {
+        }
+        try {
+            $client->qcommand('qoperation export -b K00067L8', true);
             self::fail('expected exception');
         } catch (ReadOnlyViolationException) {
         }
