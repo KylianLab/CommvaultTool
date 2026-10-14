@@ -21,3 +21,8 @@
 !/docker/certs/.gitkeep
 /docker/tapetrack.env
 ###< docker ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+# assets/vendor/ is committed on purpose: deployments must not depend on a CDN
+###< symfony/asset-mapper ###

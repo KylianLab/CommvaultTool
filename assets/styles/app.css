@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@source "../../templates";
+@source "../../src";
+
+/* Tailwind v4 defaults borders to currentColor: keep the v3 light grey. */
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button { border-color: var(--color-slate-200, currentColor); }
+}
+
+/* Slot colours of the library view (also used by the legend). */
+@layer components {
+  .slot { @apply relative flex flex-col justify-between rounded-md border p-1 text-[11px] leading-tight min-h-14; }
+  .slot-eject { @apply border-orange-500 bg-orange-100 text-orange-950 ring-2 ring-orange-400; }
+  .slot-writing { @apply border-sky-500 bg-sky-100 text-sky-950; }
+  .slot-data { @apply border-emerald-500 bg-emerald-50 text-emerald-950; }
+  .slot-full { @apply border-slate-500 bg-slate-200 text-slate-900; }
+  .slot-scratch { @apply border-slate-300 bg-white text-slate-500; }
+  .slot-aged { @apply border-violet-400 bg-violet-50 text-violet-900; }
+  .slot-cleaning { @apply border-yellow-400 bg-yellow-50 text-yellow-900; }
+  .slot-bad { @apply border-red-600 bg-red-100 text-red-900; }
+  .slot-divergent { @apply border-amber-500 bg-amber-50 text-amber-950 border-dashed; }
+  .slot-empty { @apply border-dashed border-slate-300 bg-slate-50 text-slate-300; }
+}

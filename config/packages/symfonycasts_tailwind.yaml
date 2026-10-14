@@ -1,0 +1,3 @@
+symfonycasts_tailwind:
+    # pinned standalone CLI (downloaded once into var/tailwind/)
+    binary_version: 'v4.1.11'

@@ -1,0 +1,12 @@
+twig:
+    file_name_pattern: '*.twig'
+    # stored in UTC, displayed in Belgian format and time zone
+    date:
+        format: 'd/m/Y H:i'
+        timezone: 'Europe/Brussels'
+    globals:
+        app_name: 'TapeTrack'
+
+when@test:
+    twig:
+        strict_variables: true
