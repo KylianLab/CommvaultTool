@@ -1,6 +1,15 @@
 monolog:
     channels: # To see all channels, run bin/console debug:autowiring logger
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+        - commvault # Commvault REST API calls (never logs tokens, passwords nor bodies)
+
+    handlers:
+        commvault:
+            type: rotating_file
+            path: "%kernel.logs_dir%/commvault.log"
+            level: '%env(COMMVAULT_LOG_LEVEL)%'
+            max_files: 30
+            channels: [commvault]
 
 when@dev:
     monolog:

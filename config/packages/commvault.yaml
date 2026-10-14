@@ -1,0 +1,30 @@
+# Commvault REST API (read-only) configuration.
+#
+# Non-sensitive settings come from environment variables (.env / .env.local).
+# Credentials MUST be stored in the Symfony secrets vault:
+#   php bin/console secrets:set COMMVAULT_PASSWORD
+#   php bin/console secrets:set COMMVAULT_ACCESS_TOKEN    (if auth mode = access_token)
+#   php bin/console secrets:set COMMVAULT_REFRESH_TOKEN   (if auth mode = access_token)
+parameters:
+    commvault.empty: ''
+    # "fake" (JSON fixtures, no network) or "http" (real CommServe)
+    env(COMMVAULT_CLIENT): 'fake'
+    # e.g. https://commserve.example.local/commandcenter/api  or  .../webconsole/api
+    env(COMMVAULT_BASE_URL): 'https://commserve.invalid/commandcenter/api'
+    # "login" (POST /Login + Authtoken) or "access_token" (API access token)
+    env(COMMVAULT_AUTH_MODE): 'login'
+    env(COMMVAULT_USERNAME): 'api_sa'
+    # PEM bundle of the internal CA (AD CS). Empty = system trust store.
+    env(COMMVAULT_CA_BUNDLE): ''
+    env(COMMVAULT_TIMEOUT): '30'
+    env(COMMVAULT_MAX_DURATION): '300'
+    env(COMMVAULT_MAX_RETRIES): '3'
+    env(COMMVAULT_FIXTURES_DIR): '%kernel.project_dir%/tests/Fixtures/commvault/demo'
+    env(COMMVAULT_DISCOVERY_DIR): '%kernel.project_dir%/var/discovery'
+    # debug logs every API call, info only logins / retries / errors
+    env(COMMVAULT_LOG_LEVEL): 'info'
+
+
+when@test:
+    parameters:
+        env(COMMVAULT_CLIENT): 'fake'

@@ -13,6 +13,8 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            Psr\Log\LoggerInterface $commvaultLogger: '@monolog.logger.commvault'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -21,3 +23,51 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # --- Commvault REST API (parameters: config/packages/commvault.yaml) ---
+    commvault.http_client:
+        class: Symfony\Contracts\HttpClient\HttpClientInterface
+        factory: ['App\Commvault\Http\CommvaultHttpClientFactory', 'create']
+        arguments:
+            $httpClient: '@http_client'
+            $commvaultLogger: '@monolog.logger.commvault'
+            $baseUrl: '%env(COMMVAULT_BASE_URL)%'
+            $caBundle: '%env(COMMVAULT_CA_BUNDLE)%'
+            $timeout: '%env(float:COMMVAULT_TIMEOUT)%'
+            $maxDuration: '%env(float:COMMVAULT_MAX_DURATION)%'
+            $maxRetries: '%env(int:COMMVAULT_MAX_RETRIES)%'
+
+    App\Commvault\Http\LoginTokenProvider:
+        arguments:
+            $commvaultHttpClient: '@commvault.http_client'
+            $username: '%env(COMMVAULT_USERNAME)%'
+            # default:: -> empty string when the secret is not defined
+            $password: '%env(default:commvault.empty:COMMVAULT_PASSWORD)%'
+
+    App\Commvault\Http\AccessTokenProvider:
+        arguments:
+            $commvaultHttpClient: '@commvault.http_client'
+            $accessToken: '%env(default:commvault.empty:COMMVAULT_ACCESS_TOKEN)%'
+            $refreshToken: '%env(default:commvault.empty:COMMVAULT_REFRESH_TOKEN)%'
+
+    App\Commvault\Http\TokenProviderInterface:
+        factory: ['App\Commvault\Http\TokenProviderSelector', 'select']
+        arguments:
+            $mode: '%env(COMMVAULT_AUTH_MODE)%'
+            $login: '@App\Commvault\Http\LoginTokenProvider'
+            $accessToken: '@App\Commvault\Http\AccessTokenProvider'
+
+    App\Commvault\Http\HttpCommvaultClient:
+        arguments:
+            $commvaultHttpClient: '@commvault.http_client'
+
+    App\Commvault\Fake\FixtureCommvaultClient:
+        arguments:
+            $fixturesDir: '%env(COMMVAULT_FIXTURES_DIR)%'
+
+    App\Commvault\CommvaultClientInterface:
+        factory: ['App\Commvault\CommvaultClientSelector', 'select']
+        arguments:
+            $mode: '%env(COMMVAULT_CLIENT)%'
+            $http: '@App\Commvault\Http\HttpCommvaultClient'
+            $fake: '@App\Commvault\Fake\FixtureCommvaultClient'
