@@ -35,9 +35,26 @@ services:
       COMMVAULT_CLIENT: fake
 
 
+  database:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: tapetrack
+      MARIADB_USER: tapetrack
+      # dev only: change it (and DATABASE_URL) for any shared environment
+      MARIADB_PASSWORD: tapetrack
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 20
+    volumes:
+      - database_data:/var/lib/mysql
+
 secrets:
   commvault_password:
     file: ./docker/secrets/commvault_password
 
 volumes:
   commvault-state:
+
+  database_data:
