@@ -45,6 +45,7 @@ docker compose run --rm discover -vv          # découverte -> ./var/discovery/
 - La paire d'access tokens renouvelée est conservée dans le volume `commvault-state` (les refresh tokens sont à usage unique).
 - Le CommServe doit être joignable depuis WSL : vérifier avec `curl -v https://<commserve>/commandcenter/api/` dans WSL. Derrière un VPN, le mode réseau *mirrored* de WSL (`networkingMode=mirrored` dans `.wslconfig`) aide souvent.
 - Avec Podman : `podman compose` à la place de `docker compose`.
+- Avec **WSL Containers** (`wslc`, sans compose) : `.\docker\wslc.ps1 build`, `.\docker\wslc.ps1 test`, `.\docker\wslc.ps1 discover --list`, puis `.\docker\wslc.ps1 discover -vv`.
 
 Depuis **PowerShell** (Windows), les équivalents des commandes de préparation :
 
