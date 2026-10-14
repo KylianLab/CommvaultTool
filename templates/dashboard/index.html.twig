@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+{% import '_partials/media.html.twig' as ui %}
+
+{% block title %}Maintenant{% endblock %}
+
+{% block body %}
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-2">
+        <div>
+            <h1 class="text-2xl font-bold">Maintenant</h1>
+            <p class="text-sm text-slate-500">
+                {% if d.lastSuccess %}Données Commvault du {{ d.lastSuccess.finishedAt|date }} ({{ d.lastSuccess.finishedAt|ago }}).{% else %}Aucune synchronisation réussie pour l'instant.{% endif %}
+            </p>
+        </div>
+    </div>
+
+    {# --- Big counters ----------------------------------------------------- #}
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-5">
+        {% set cards = [
+            {label: 'Tapes à sortir', value: d.toEject|length, tone: 'orange', link: path('app_library'), hint: 'en ouvrant les tiroirs'},
+            {label: 'Fiches à imprimer / compléter', value: d.sheets|length, tone: 'sky', link: '#fiches', hint: 'backups qui reçoivent ces tapes'},
+            {label: 'Tapes à rentrer', value: d.toReturnCount, tone: 'violet', link: '#retours', hint: 'aged, à recycler dans la TL'},
+            {label: 'En transit', value: d.inTransit|length, tone: 'amber', link: '#transit', hint: 'vers le site externe'},
+            {label: 'Tapes neuves à prévoir', value: d.toEject|length, tone: 'emerald', link: null, hint: d.spareInLibrary ~ ' vierge(s) déjà dans la TL'},
+        ] %}
+        {% for c in cards %}
+            {% set colors = {
+                orange: 'border-orange-500 text-orange-600', sky: 'border-sky-500 text-sky-600', violet: 'border-violet-500 text-violet-600',
+                amber: 'border-amber-500 text-amber-600', emerald: 'border-emerald-500 text-emerald-600'} %}
+            {% set inner %}
+                <div class="text-5xl font-black tabular-nums {{ c.value == 0 ? 'text-slate-300' : '' }}">{{ c.value }}</div>
+                <div class="mt-1 font-semibold text-slate-800">{{ c.label }}</div>
+                <div class="text-xs text-slate-500">{{ c.hint }}</div>
+            {% endset %}
+            {% if c.link %}
+                <a href="{{ c.link }}" class="block rounded-xl border-t-4 bg-white p-4 shadow-sm hover:shadow-md {{ colors[c.tone] }}">{{ inner }}</a>
+            {% else %}
+                <div class="rounded-xl border-t-4 bg-white p-4 shadow-sm {{ colors[c.tone] }}">{{ inner }}</div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {# --- Sync / alerts ------------------------------------------------------- #}
+    {% if d.consecutiveFailures > 0 or d.alertCount > 0 %}
+        <section class="mt-6 rounded-xl border border-red-200 bg-white p-4 shadow-sm">
+            <h2 class="mb-3 flex items-center gap-2 text-lg font-bold text-red-700"><span class="inline-flex size-6 items-center justify-center rounded-full bg-red-600 text-xs text-white">{{ d.alertCount }}</span> Alertes</h2>
+            <ul class="space-y-2 text-sm">
+                {% if d.consecutiveFailures > 0 %}
+                    <li class="rounded-md bg-red-50 px-3 py-2 text-red-800">
+                        <strong>Synchronisation en échec</strong> ({{ d.consecutiveFailures }} fois de suite) : {{ d.lastRun.error }}
+                        {% if d.lastSuccess %}<br><span class="text-xs">Les écrans montrent les données du {{ d.lastSuccess.finishedAt|date }}.</span>{% endif %}
+                    </li>
+                {% endif %}
+                {% for w in d.lastRun.warnings ?? [] %}
+                    <li class="rounded-md bg-amber-50 px-3 py-2 text-amber-900">{{ w }}</li>
+                {% endfor %}
+                {% for m in d.mediaAlerts %}
+                    {% for a in m.alerts %}
+                        <li class="rounded-md bg-amber-50 px-3 py-2 text-amber-900">{{ ui.barcode(m) }} — {{ a }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for c in d.cycleAnomalies %}
+                    {% for a in c.anomalies %}
+                        <li class="rounded-md bg-slate-50 px-3 py-2 text-slate-700">Fiche {{ c.copy.policy.shortName }} (rétention {{ c.retentionDate ? c.retentionDate|date('d/m/Y', false) : '?' }}) — {{ a }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+        {# --- To eject, drawer by drawer ------------------------------------- #}
+        <section class="rounded-xl bg-white p-4 shadow-sm">
+            <h2 class="mb-3 text-lg font-bold">À sortir, tiroir par tiroir</h2>
+            {% set any = false %}
+            {% for lib in d.libraries %}
+                {% for drawer in lib.drawers %}
+                    {% set tapes = drawer.toEject %}
+                    {% if tapes is not empty %}
+                        {% set any = true %}
+                        <div class="mb-3">
+                            <div class="mb-1 text-sm font-semibold text-slate-600">{{ lib.library.name }} · Tiroir {{ drawer.number }} <span class="font-normal text-slate-400">(slots {{ drawer.firstSlot }}–{{ drawer.lastSlot }})</span></div>
+                            <ul class="divide-y rounded-lg border">
+                                {% for m in tapes %}
+                                    <li class="flex items-center gap-3 px-3 py-2 text-sm">
+                                        <span class="w-14 text-slate-500">slot {{ m.slot }}</span>
+                                        {{ ui.barcode(m) }}
+                                        <span class="text-slate-600">{{ ui.policy(m) }}</span>
+                                        <span class="ml-auto text-xs text-slate-500">{{ m.ejectReason }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            {% if not any %}<p class="text-sm text-slate-500">Rien à sortir pour l'instant.</p>{% endif %}
+        </section>
+
+        {# --- Sheets ---------------------------------------------------------- #}
+        <section id="fiches" class="rounded-xl bg-white p-4 shadow-sm">
+            <h2 class="mb-3 text-lg font-bold">Fiches concernées</h2>
+            {% for c in d.sheets %}
+                <div class="mb-2 flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+                    <div>
+                        <div class="font-semibold">{{ c.copy.policy.shortName }}</div>
+                        <div class="text-xs text-slate-500">BackUp {{ c.backupDate ? c.backupDate|date('d/m/Y') : '?' }} · Retention {{ c.retentionDate ? c.retentionDate|date('d/m/Y', false) : '?' }}</div>
+                    </div>
+                    <div class="text-right text-xs text-slate-500">{{ c.media|length }} tape(s)<br>{{ c.copy.storageLocation ? c.copy.storageLocation.label : 'boîte non définie' }}</div>
+                </div>
+            {% else %}
+                <p class="text-sm text-slate-500">Aucune fiche à imprimer.</p>
+            {% endfor %}
+            <p class="mt-2 text-xs text-slate-400">L'impression des fiches arrive en phase 5.</p>
+        </section>
+
+        {# --- To return -------------------------------------------------------- #}
+        <section id="retours" class="rounded-xl bg-white p-4 shadow-sm">
+            <h2 class="mb-3 text-lg font-bold">À rentrer dans la TL</h2>
+            {% for where, tapes in d.toReturn %}
+                <div class="mb-3">
+                    <div class="mb-1 text-sm font-semibold text-slate-600">À récupérer : {{ where }}</div>
+                    <div class="flex flex-wrap gap-2">
+                        {% for m in tapes %}<span class="rounded-md bg-violet-50 px-2 py-1 text-sm ring-1 ring-violet-200">{{ ui.barcode(m) }}</span>{% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-sm text-slate-500">Aucune tape à rentrer.</p>
+            {% endfor %}
+        </section>
+
+        {# --- In transit ------------------------------------------------------- #}
+        <section id="transit" class="rounded-xl bg-white p-4 shadow-sm">
+            <h2 class="mb-3 text-lg font-bold">En transit vers le site externe</h2>
+            {% for m in d.inTransit %}
+                <div class="flex items-center gap-3 border-b py-1.5 text-sm last:border-0">{{ ui.barcode(m) }} <span class="text-slate-600">{{ ui.policy(m) }}</span><span class="ml-auto text-xs text-slate-500">{{ m.location ? m.location.label : '' }}</span></div>
+            {% else %}
+                <p class="text-sm text-slate-500">Aucune tape en transit.</p>
+            {% endfor %}
+        </section>
+    </div>
+{% endblock %}

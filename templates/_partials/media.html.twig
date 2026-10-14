@@ -1,0 +1,13 @@
+{# Small reusable bits. #}
+{% macro barcode(m) %}<span class="font-mono font-semibold tracking-tight">{{ m.barcode }}</span>{% endmacro %}
+
+{% macro status(m) %}
+    {% set colors = {
+        'Full Media': 'bg-slate-200 text-slate-800', 'Active Media': 'bg-emerald-100 text-emerald-800',
+        'Appendable Media': 'bg-emerald-100 text-emerald-800', 'Aged Media': 'bg-violet-100 text-violet-800',
+        'Spare Media': 'bg-white text-slate-500 ring-1 ring-slate-200', 'Bad Media': 'bg-red-100 text-red-800',
+        'Cleaning Media': 'bg-yellow-100 text-yellow-800'} %}
+    <span class="rounded px-1.5 py-0.5 text-xs font-medium {{ colors[m.commvaultStatus] ?? 'bg-slate-100' }}">{{ m.commvaultStatus|replace({' Media': ''}) }}</span>
+{% endmacro %}
+
+{% macro policy(m) %}{% if m.copy %}<span title="{{ m.copy.label }}">{{ m.copy.policy.shortName }}</span>{% else %}<span class="text-slate-400">—</span>{% endif %}{% endmacro %}

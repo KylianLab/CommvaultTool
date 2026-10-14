@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+{% import '_partials/media.html.twig' as ui %}
+
+{% block title %}Tape library{% endblock %}
+
+{% block body %}
+    <h1 class="mb-1 text-2xl font-bold">Tape library</h1>
+    <p class="mb-4 text-sm text-slate-500">Ouvrez chaque tiroir une seule fois : les tapes à retirer sont listées sous chaque tiroir.</p>
+
+    <div class="mb-6 flex flex-wrap gap-2 text-xs">
+        {% for state, label in legend %}
+            <span class="slot slot-{{ state }} !min-h-0 !flex-row items-center !px-2 !py-1">{{ label }}</span>
+        {% endfor %}
+    </div>
+
+    {% for lib in libraries %}
+        <section class="mb-8">
+            <div class="mb-3 flex flex-wrap items-baseline gap-3">
+                <h2 class="text-xl font-bold">{{ lib.library.name }}</h2>
+                <span class="text-sm text-slate-500">{{ lib.library.model }} · {{ lib.library.slotCount ?? '?' }} slots · <strong class="text-orange-600">{{ lib.toEjectCount }} à sortir</strong></span>
+            </div>
+
+            {% if lib.mounted is not empty %}
+                <div class="mb-4 flex flex-wrap gap-2">
+                    {% for m in lib.mounted %}
+                        <div class="slot slot-writing !min-h-0 !flex-row items-center gap-2 !px-3 !py-2 text-sm">
+                            <span class="size-2 animate-pulse rounded-full bg-sky-500"></span>
+                            <span>{{ m.drive }}</span> {{ ui.barcode(m) }} <span class="text-xs">{{ ui.policy(m) }}{% if m.driveJobIds is not empty %} · job {{ m.driveJobIds|join(', ') }}{% endif %}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if lib.drawers is empty %}
+                <p class="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">Aucun tiroir configuré pour cette bibliothèque (admin, phase 6 ; ou <code>TAPETRACK_DEFAULT_DRAWERS</code>).</p>
+            {% endif %}
+
+            <div class="grid gap-4 xl:grid-cols-2">
+                {% for drawer in lib.drawers %}
+                    {% set eject = drawer.toEject %}
+                    <div class="rounded-xl bg-white p-3 shadow-sm {{ eject is not empty ? 'ring-2 ring-orange-400' : '' }}">
+                        <div class="mb-2 flex items-center justify-between">
+                            <h3 class="font-bold">Tiroir {{ drawer.number }} <span class="text-sm font-normal text-slate-400">slots {{ drawer.firstSlot }}–{{ drawer.lastSlot }}</span></h3>
+                            {% if eject is not empty %}
+                                <span class="rounded-full bg-orange-500 px-2.5 py-0.5 text-sm font-bold text-white">{{ eject|length }} à sortir</span>
+                            {% else %}
+                                <span class="text-sm text-slate-400">rien à sortir</span>
+                            {% endif %}
+                        </div>
+                        <div class="grid grid-cols-5 gap-1.5 sm:grid-cols-10">
+                            {% for s in drawer.slots %}
+                                <div class="slot slot-{{ s.state }}" title="Slot {{ s.number }} — {{ s.label }}{% if s.media %} — {{ s.media.barcode }} ({{ s.media.commvaultStatus }}){% if s.media.ejectReason %} — {{ s.media.ejectReason }}{% endif %}{% endif %}">
+                                    <span class="text-[10px] opacity-60">{{ s.number }}</span>
+                                    {% if s.media %}<span class="truncate font-mono font-semibold">{{ s.media.barcode|slice(0, 6) }}</span>{% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if eject is not empty %}
+                            <ul class="mt-3 divide-y rounded-lg border border-orange-200 bg-orange-50/50 text-sm">
+                                {% for m in eject %}
+                                    <li class="flex items-center gap-3 px-3 py-1.5">
+                                        <span class="w-14 text-slate-500">slot {{ m.slot }}</span>{{ ui.barcode(m) }}
+                                        <span class="text-slate-600">{{ ui.policy(m) }}</span>
+                                        <span class="ml-auto text-xs text-slate-500">→ {{ m.copy and m.copy.storageLocation ? m.copy.storageLocation.label : 'boîte non définie' }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if lib.unassigned is not empty %}
+                <div class="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+                    Tapes dans des slots hors des tiroirs configurés :
+                    {% for s in lib.unassigned %}<span class="ml-2">slot {{ s.number }} {{ ui.barcode(s.media) }}</span>{% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    {% else %}
+        <p class="rounded-lg bg-white p-6 text-slate-500 shadow-sm">Aucune bibliothèque gérée : lancez une synchronisation.</p>
+    {% endfor %}
+{% endblock %}

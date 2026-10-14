@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Synchronisations{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4 text-2xl font-bold">Synchronisations Commvault</h1>
+    <div class="overflow-x-auto rounded-xl bg-white shadow-sm">
+        <table class="min-w-full text-sm">
+            <thead class="bg-slate-50 text-left text-xs uppercase text-slate-500">
+                <tr><th class="px-3 py-2">Début</th><th class="px-3 py-2">Origine</th><th class="px-3 py-2">Statut</th><th class="px-3 py-2">Durée</th><th class="px-3 py-2">Résultat</th></tr>
+            </thead>
+            <tbody class="divide-y">
+                {% for r in runs %}
+                    <tr class="align-top">
+                        <td class="whitespace-nowrap px-3 py-2">{{ r.startedAt|date }}</td>
+                        <td class="px-3 py-2">{{ r.trigger }}</td>
+                        <td class="px-3 py-2"><span class="rounded px-2 py-0.5 text-xs font-semibold {{ {success: 'bg-emerald-100 text-emerald-800', failed: 'bg-red-100 text-red-800', running: 'bg-sky-100 text-sky-800', skipped: 'bg-slate-100 text-slate-600'}[r.status.value] }}">{{ r.status.label }}</span></td>
+                        <td class="px-3 py-2">{{ r.durationSeconds is not null ? r.durationSeconds ~ ' s' : '—' }}</td>
+                        <td class="px-3 py-2 text-xs text-slate-600">
+                            {% if r.error %}<div class="text-red-700">{{ r.error }}</div>{% endif %}
+                            {% for w in r.warnings %}<div class="text-amber-800">{{ w }}</div>{% endfor %}
+                            {% if r.stats is not empty %}{{ r.stats|map((v, k) => k ~ ' ' ~ v)|join(' · ') }}{% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" class="px-3 py-6 text-center text-slate-500">Aucune synchronisation.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
