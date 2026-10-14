@@ -34,7 +34,7 @@ final class ReturnAndAlertsTest extends TestCase
 
         $stored = Factory::media('K1', Media::STATUS_FULL, true, slot: 12);
         $stored->setPhysicalState(PhysicalState::Stored);
-        self::assertSame(['Commvault voit la tape dans la TL (slot 12) alors qu\'elle est marquée « Rangée ».'], $alerts->for($stored, true));
+        self::assertSame(['Commvault voit la tape dans la TL (slot 12) alors qu\'elle est marquée « Rangée » (inventaire de la TL à lancer ?).'], $alerts->for($stored, true));
 
         $notConfirmed = Factory::media('K2', Media::STATUS_FULL, false);
         self::assertStringContainsString('sortie non confirmée', $alerts->for($notConfirmed, true)[0]);
@@ -44,5 +44,21 @@ final class ReturnAndAlertsTest extends TestCase
 
         self::assertStringContainsString('absente', $alerts->for(Factory::media('K4'), false)[0]);
         self::assertSame([], $alerts->for(Factory::media('K5'), true));
+    }
+
+    public function testNoDivergenceAlertWhileWaitingForTheLibraryInventory(): void
+    {
+        $alerts = new MediaAlerts(72);
+        $now = Factory::at('2026-10-14 10:00');
+
+        $justEjected = Factory::media('K1', Media::STATUS_FULL, true, slot: 5);
+        $justEjected->setPhysicalState(PhysicalState::Ejected, Factory::at('2026-10-13 16:00'));
+        self::assertSame([], $alerts->for($justEjected, true, $now), 'drawer opened yesterday, Commvault not inventoried yet');
+        self::assertTrue($alerts->awaitingInventory($justEjected, $now));
+
+        $longAgo = Factory::media('K2', Media::STATUS_FULL, true, slot: 6);
+        $longAgo->setPhysicalState(PhysicalState::Stored, Factory::at('2026-10-09 10:00'));
+        self::assertStringContainsString('inventaire', $alerts->for($longAgo, true, $now)[0]);
+        self::assertFalse($alerts->awaitingInventory($longAgo, $now));
     }
 }

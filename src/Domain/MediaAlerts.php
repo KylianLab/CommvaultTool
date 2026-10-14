@@ -14,16 +14,26 @@ use App\Enum\PhysicalState;
 final class MediaAlerts
 {
     /**
+     * @param int $inventoryGraceHours tapes are removed by opening the drawer, not exported
+     *                                 through Commvault: Commvault keeps seeing them in their
+     *                                 slot until the next library inventory
+     */
+    public function __construct(
+        private readonly int $inventoryGraceHours = 72,
+    ) {
+    }
+
+    /**
      * @return list<string>
      */
-    public function for(Media $media, bool $seenInLastSync): array
+    public function for(Media $media, bool $seenInLastSync, ?\DateTimeImmutable $now = null): array
     {
         $alerts = [];
         $state = $media->getPhysicalState();
 
-        if ($media->isInLibrary() && $state->isOutsideLibrary()) {
+        if ($media->isInLibrary() && $state->isOutsideLibrary() && !$this->awaitingInventory($media, $now)) {
             $alerts[] = \sprintf(
-                'Commvault voit la tape dans la TL%s alors qu\'elle est marquée « %s ».',
+                'Commvault voit la tape dans la TL%s alors qu\'elle est marquée « %s » (inventaire de la TL à lancer ?).',
                 null !== $media->getSlot() ? ' (slot '.$media->getSlot().')' : '',
                 $state->label(),
             );
@@ -44,5 +54,20 @@ final class MediaAlerts
         }
 
         return $alerts;
+    }
+
+    /**
+     * Ejection confirmed recently: Commvault has probably not inventoried the
+     * library yet, this is expected and not an alert.
+     */
+    public function awaitingInventory(Media $media, ?\DateTimeImmutable $now): bool
+    {
+        $confirmedAt = $media->getPhysicalStateChangedAt();
+
+        return null !== $now
+            && null !== $confirmedAt
+            && $media->isInLibrary()
+            && $media->getPhysicalState()->isOutsideLibrary()
+            && $now->getTimestamp() - $confirmedAt->getTimestamp() < $this->inventoryGraceHours * 3600;
     }
 }

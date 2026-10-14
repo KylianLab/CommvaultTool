@@ -144,7 +144,7 @@ final class SynchronizerTest extends DatabaseTestCase
         $tape = $this->media('K00120L8');
         self::assertSame(PhysicalState::Stored, $tape->getPhysicalState());
         self::assertFalse($tape->isToEject());
-        self::assertSame(['Commvault voit la tape dans la TL (slot 5) alors qu\'elle est marquée « Rangée ».'], $tape->getAlerts());
+        self::assertSame(['Commvault voit la tape dans la TL (slot 5) alors qu\'elle est marquée « Rangée » (inventaire de la TL à lancer ?).'], $tape->getAlerts());
         self::assertContains('Commvault signale la tape comme défectueuse (Bad Media).', $this->media('K00099L8')->getAlerts());
     }
 

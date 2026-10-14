@@ -87,6 +87,10 @@ class Media
     #[ORM\Column(length: 32, enumType: PhysicalState::class)]
     private PhysicalState $physicalState = PhysicalState::InLibrary;
 
+    /** When the physical state was last confirmed (null = set by the first sync). */
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $physicalStateChangedAt = null;
+
     #[ORM\ManyToOne, ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?StorageLocation $location = null;
 
@@ -150,7 +154,16 @@ class Media
     public function getLastSeenAt(): \DateTimeImmutable { return $this->lastSeenAt; }
     public function setLastSeenAt(\DateTimeImmutable $at): void { $this->lastSeenAt = $at; }
     public function getPhysicalState(): PhysicalState { return $this->physicalState; }
-    public function setPhysicalState(PhysicalState $state): void { $this->physicalState = $state; }
+    public function getPhysicalStateChangedAt(): ?\DateTimeImmutable { return $this->physicalStateChangedAt; }
+
+    /**
+     * @param \DateTimeImmutable|null $confirmedAt when a person confirmed it (null for the initial state set by the sync)
+     */
+    public function setPhysicalState(PhysicalState $state, ?\DateTimeImmutable $confirmedAt = null): void
+    {
+        $this->physicalState = $state;
+        $this->physicalStateChangedAt = $confirmedAt;
+    }
     public function getLocation(): ?StorageLocation { return $this->location; }
     public function setLocation(?StorageLocation $location): void { $this->location = $location; }
     public function isToEject(): bool { return $this->toEject; }

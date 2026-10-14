@@ -96,11 +96,12 @@ Chaque run est historisé dans `sync_run` : statut, durée, compteurs, avertisse
 | `TAPETRACK_JOB_WINDOW_DAYS` | `730` | Profondeur de lecture des jobs par copie |
 | `TAPETRACK_CYCLE_GROUPING` | `retention` | `retention` (copie + date de rétention) ou `full_to_full` |
 | `TAPETRACK_SYNC_INTERVAL` | `15 minutes` | Période de la synchro automatique |
+| `TAPETRACK_INVENTORY_GRACE_HOURS` | `72` | Délai sans alerte après une sortie confirmée. Les tapes sortent en ouvrant le tiroir, et Commvault les voit dans leur slot jusqu'au prochain inventaire de la TL. |
 
 ### Tests
 
 ```bash
-vendor/bin/phpunit          # 87 tests : client Commvault, règles métier, synchro sur SQLite
+vendor/bin/phpunit          # 88 tests : client Commvault, règles métier, synchro sur SQLite
 ```
 
 Les migrations ont été validées sur MariaDB 11.4.

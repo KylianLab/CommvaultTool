@@ -56,7 +56,7 @@ final class CommvaultSynchronizer
         private readonly LoggerInterface $commvaultLogger,
         private readonly EjectPolicy $ejectPolicy = new EjectPolicy(),
         private readonly ReturnPolicy $returnPolicy = new ReturnPolicy(),
-        private readonly MediaAlerts $mediaAlerts = new MediaAlerts(),
+        private ?MediaAlerts $mediaAlerts = null,
         private readonly CycleGrouper $cycleGrouper = new CycleGrouper(),
     ) {
     }
@@ -64,6 +64,7 @@ final class CommvaultSynchronizer
     public function run(string $trigger): SyncRun
     {
         $this->em = $this->manager();
+        $this->mediaAlerts ??= new MediaAlerts($this->settings->inventoryGraceHours);
         $now = $this->now();
         $run = new SyncRun($trigger, $now);
 
@@ -319,7 +320,7 @@ final class CommvaultSynchronizer
             $decision = $this->ejectPolicy->decide($media, $busy);
             $media->setToEject($decision->toEject, $decision->reason);
             $media->setToReturn($this->returnPolicy->mustReturn($media));
-            $media->setAlerts($this->mediaAlerts->for($media, $media->getLastSeenAt() >= $now));
+            $media->setAlerts($this->mediaAlerts->for($media, $media->getLastSeenAt() >= $now, $now));
 
             $counts['to_eject'] += (int) $media->isToEject();
             $counts['to_return'] += (int) $media->isToReturn();

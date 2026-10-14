@@ -25,6 +25,7 @@ final readonly class SyncSettings
         #[Autowire('%env(TAPETRACK_DEFAULT_DRAWERS)%')] string $defaultDrawers,
         #[Autowire('%env(int:TAPETRACK_JOB_WINDOW_DAYS)%')] public int $jobWindowDays,
         #[Autowire('%env(TAPETRACK_CYCLE_GROUPING)%')] string $cycleGrouping,
+        #[Autowire('%env(int:TAPETRACK_INVENTORY_GRACE_HOURS)%')] public int $inventoryGraceHours = 72,
     ) {
         $this->managedLibraryIds = array_values(array_map('intval', array_filter(array_map('trim', explode(',', $managedLibraries)), 'is_numeric')));
         $this->defaultDrawers = self::parseDrawers($defaultDrawers);

@@ -76,6 +76,8 @@ Une tape vue pour la première fois prend l'état `in_library` si Commvault la v
 Alertes :
 
 - Commvault voit la tape dans la TL alors qu'elle est marquée sortie, rangée ou hors site.
+  - Les tapes sortent **en ouvrant le tiroir**, sans export Commvault : Commvault les voit encore dans leur slot jusqu'au prochain inventaire de la TL.
+  - L'alerte n'est donc levée qu'après `TAPETRACK_INVENTORY_GRACE_HOURS` (72 h par défaut) suivant la sortie confirmée.
 - Commvault la voit hors de la TL alors qu'elle est marquée « dans la TL » (sortie non confirmée), ou « remise » (inventaire à faire ?).
 - `Bad Media`.
 - Tape absente de la dernière synchronisation.

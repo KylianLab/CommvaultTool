@@ -12,3 +12,7 @@ parameters:
     env(TAPETRACK_CYCLE_GROUPING): 'retention'
     # Period of the automatic synchronisation (any strtotime-compatible interval).
     env(TAPETRACK_SYNC_INTERVAL): '15 minutes'
+    # Tapes are removed by opening the drawer (no Commvault export): Commvault keeps
+    # seeing them in their slot until the next library inventory. No divergence
+    # alert during this many hours after a confirmed ejection.
+    env(TAPETRACK_INVENTORY_GRACE_HOURS): '72'
