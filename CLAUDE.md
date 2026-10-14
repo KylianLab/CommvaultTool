@@ -9,7 +9,11 @@ Application de suivi des tapes Commvault de la KBR. Le cahier des charges comple
   - Entités : `src/Entity`. Règles métier : `src/Domain`, documentées dans `docs/eject-rules.md`.
   - Synchro : `src/Sync/CommvaultSynchronizer.php`, commande `app:sync`, worker Messenger avec Scheduler.
   - Fixtures de démo : `tests/Fixtures/commvault/demo` (générées par `generate.py`, date de référence 14/10/2026).
-- Prochaine étape : **Phase 3**, tableau de bord, vue TL et vue armoires. Viendront ensuite :
+- **Phase 3 (interface) : terminée.**
+  - Contrôleurs : `src/Controller`. Modèles de vue : `src/View`. Gabarits : `templates/`.
+  - Tailwind v4 dans `assets/styles/app.css`. Stimulus et Turbo sont vendorisés dans `assets/vendor` (committé, pas de CDN).
+  - Aperçu local : `docker/preview.sh` (SQLite, serveur intégré).
+- Prochaine étape : **Phase 4**, sessions de sortie et de retour avec audit. Viendront ensuite :
   - sessions de sortie et de retour ;
   - impression des fiches ;
   - admin et authentification ;

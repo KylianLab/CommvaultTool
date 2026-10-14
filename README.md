@@ -8,7 +8,24 @@ Stack : PHP 8.4, Symfony 7.4 LTS, Doctrine/MariaDB, Twig + Symfony UX (phases su
 
 - **Phase 0, découverte de l'API Commvault : terminée.** Voir [`docs/commvault-mapping.md`](docs/commvault-mapping.md).
 - **Phase 2, modèle de données et synchronisation : terminée.** Voir [`docs/eject-rules.md`](docs/eject-rules.md) et la section « Synchronisation » ci-dessous.
-- Prochaine étape : Phase 3, tableau de bord, vue TL et vue armoires.
+- **Phase 3, tableau de bord, vue TL et vue armoires : terminée.**
+- Prochaine étape : Phase 4, sessions de sortie et de retour avec journal d'audit.
+
+## Aperçu de l'interface en une commande (Windows, WSL Containers)
+
+```powershell
+.\docker\wslc.ps1 build
+.\docker\wslc.ps1 app          # données de démo -> http://localhost:8000
+.\docker\wslc.ps1 app -Real    # données réelles du CommServe (docker\tapetrack.env + secret)
+```
+
+Pour cet aperçu, la base est un fichier SQLite dans `var\data\`, distinct pour la démo et pour les données réelles. La synchro tourne toutes les 15 min tant que l'aperçu est ouvert. La production utilise MariaDB, Nginx/PHP-FPM et le worker systemd.
+
+Pages :
+- **Maintenant** (`/`) : compteurs, alertes, sorties tiroir par tiroir, fiches concernées, retours, transit ;
+- **Tape library** (`/tl`) : les tiroirs et leurs slots colorés, les lecteurs ;
+- **Armoires** (`/armoires`) ;
+- **Synchronisations** (`/synchronisations`).
 
 ## Phase 0 : découverte de l'API Commvault
 
