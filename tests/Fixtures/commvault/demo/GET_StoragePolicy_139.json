@@ -1,0 +1,50 @@
+{
+  "storagePolicy": {
+    "storagePolicyName": "SP_VSP_Online-S",
+    "storagePolicyId": 139
+  },
+  "copy": [
+    {
+      "copyType": 1,
+      "active": 1,
+      "isDefault": 1,
+      "isSnapCopy": 0,
+      "copyPrecedence": 1,
+      "storageType": 1,
+      "retentionRules": {
+        "retainBackupDataForCycles": 1,
+        "retainBackupDataForDays": 30,
+        "jobs": 0
+      },
+      "StoragePolicyCopy": {
+        "copyId": 169,
+        "copyName": "Primary"
+      },
+      "library": {
+        "libraryName": "KBR_DL01",
+        "libraryId": 7
+      }
+    },
+    {
+      "copyType": 2,
+      "active": 1,
+      "isDefault": 0,
+      "isSnapCopy": 0,
+      "copyPrecedence": 2,
+      "storageType": 1,
+      "retentionRules": {
+        "retainBackupDataForCycles": 1,
+        "retainBackupDataForDays": 270,
+        "jobs": 0
+      },
+      "StoragePolicyCopy": {
+        "copyId": 168,
+        "copyName": "Master"
+      },
+      "library": {
+        "libraryName": "IBM VSP",
+        "libraryId": 36
+      }
+    }
+  ]
+}

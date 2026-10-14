@@ -1,0 +1,28 @@
+{
+  "tapeStorage": [
+    {
+      "id": 26,
+      "name": "IBM INFRA",
+      "storageType": "TAPE",
+      "status": "Ready",
+      "manufacturer": "IBM",
+      "model": "3573-TL",
+      "company": {
+        "id": 0,
+        "name": ""
+      }
+    },
+    {
+      "id": 36,
+      "name": "IBM VSP",
+      "storageType": "TAPE",
+      "status": "Ready",
+      "manufacturer": "IBM",
+      "model": "3573-TL",
+      "company": {
+        "id": 0,
+        "name": ""
+      }
+    }
+  ]
+}

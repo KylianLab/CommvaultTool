@@ -159,7 +159,7 @@ class Media
     public function setToEject(bool $toEject, ?string $reason = null): void
     {
         $this->toEject = $toEject;
-        $this->ejectReason = $toEject ? $reason : null;
+        $this->ejectReason = $reason; // why it must leave, or why it stays
     }
 
     public function isToReturn(): bool { return $this->toReturn; }

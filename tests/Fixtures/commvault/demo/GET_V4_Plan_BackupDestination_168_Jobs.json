@@ -1,0 +1,27 @@
+{
+  "jobs": [
+    {
+      "jobId": 270100,
+      "jobType": "Full",
+      "status": "Available",
+      "statusId": 1,
+      "isAged": false,
+      "startTime": 1775934000,
+      "endTime": 1777680000,
+      "retainUntil": 1799611200,
+      "server": {
+        "name": "srv-119",
+        "id": 119
+      },
+      "subClient": {
+        "name": "default",
+        "id": 266
+      },
+      "backupSet": {
+        "name": "defaultBackupSet",
+        "id": 149
+      },
+      "retentionReason": "BASIC_DAYS,BASIC_CYCLES"
+    }
+  ]
+}

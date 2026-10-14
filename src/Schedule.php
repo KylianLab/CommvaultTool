@@ -1,28 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App;
 
+use App\Message\SyncCommvault;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
+use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule as SymfonySchedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
+/**
+ * Periodic tasks, run by the Messenger worker (systemd service
+ * "tapetrack-worker": bin/console messenger:consume scheduler_default async).
+ */
 #[AsSchedule]
-class Schedule implements ScheduleProviderInterface
+final class Schedule implements ScheduleProviderInterface
 {
     public function __construct(
-        private CacheInterface $cache,
+        private readonly CacheInterface $cache,
+        #[Autowire('%env(TAPETRACK_SYNC_INTERVAL)%')] private readonly string $syncInterval,
     ) {
     }
 
     public function getSchedule(): SymfonySchedule
     {
         return (new SymfonySchedule())
-            ->stateful($this->cache) // ensure missed tasks are executed
-            ->processOnlyLastMissedRun(true) // ensure only last missed task is run
-
-            // add your own tasks here
-            // see https://symfony.com/doc/current/scheduler.html#attaching-recurring-messages-to-a-schedule
-        ;
+            ->stateful($this->cache)
+            ->processOnlyLastMissedRun(true)
+            ->add(RecurringMessage::every($this->syncInterval, new SyncCommvault('schedule')));
     }
 }

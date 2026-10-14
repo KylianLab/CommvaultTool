@@ -1,0 +1,14 @@
+# TapeTrack business settings (see README "Configuration").
+parameters:
+    # Commvault library ids managed by TapeTrack (comma separated). 36 = IBM VSP.
+    env(TAPETRACK_MANAGED_LIBRARIES): '36'
+    # Default drawer layout, applied once to a library that has no drawer yet
+    # (afterwards it is edited in the admin). Format: "<libraryId>=<drawer>:<first>-<last>,...;..."
+    # KBR: 80-slot library, 4 drawers of 20; VSP = logical slots 1-60 (drawers 1-3), INFRA = slots 1-20 (drawer 4).
+    env(TAPETRACK_DEFAULT_DRAWERS): '36=1:1-20,2:21-40,3:41-60;26=4:1-20'
+    # How far back jobs are read on each copy (must cover the oldest Full still on tape).
+    env(TAPETRACK_JOB_WINDOW_DAYS): '730'
+    # "retention" (copy + retention date, default) or "full_to_full".
+    env(TAPETRACK_CYCLE_GROUPING): 'retention'
+    # Period of the automatic synchronisation (any strtotime-compatible interval).
+    env(TAPETRACK_SYNC_INTERVAL): '15 minutes'

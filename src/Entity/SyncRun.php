@@ -26,7 +26,7 @@ class SyncRun
     private SyncStatus $status = SyncStatus::Running;
 
     /** "schedule", "manual:<user>", "cli". */
-    #[ORM\Column(length: 128)]
+    #[ORM\Column(name: 'triggered_by', length: 128)]
     private string $trigger;
 
     /** @var array<string, int> */
@@ -35,6 +35,10 @@ class SyncRun
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $error = null;
+
+    /** Non-blocking problems (an endpoint refused, a library not found...). @var list<string> */
+    #[ORM\Column(type: Types::JSON)]
+    private array $warnings = [];
 
     public function __construct(string $trigger, \DateTimeImmutable $now)
     {
@@ -50,6 +54,18 @@ class SyncRun
     /** @return array<string, int> */
     public function getStats(): array { return $this->stats; }
     public function getError(): ?string { return $this->error; }
+    /** @return list<string> */
+    public function getWarnings(): array { return $this->warnings; }
+
+    public function addWarning(string $warning): void
+    {
+        $this->warnings[] = $warning;
+    }
+
+    public function getDurationSeconds(): ?int
+    {
+        return null === $this->finishedAt ? null : $this->finishedAt->getTimestamp() - $this->startedAt->getTimestamp();
+    }
 
     /** @param array<string, int> $stats */
     public function finish(SyncStatus $status, \DateTimeImmutable $now, array $stats = [], ?string $error = null): void

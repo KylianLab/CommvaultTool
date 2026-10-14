@@ -1,0 +1,550 @@
+{
+  "mediaDetailsList": [
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6915,
+      "lastWriteTime": 1779900000,
+      "retainDataUntil": 1802114100,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00067L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6916,
+      "lastWriteTime": 1780999020,
+      "retainDataUntil": 1802114100,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00057L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6917,
+      "lastWriteTime": 1781044380,
+      "retainDataUntil": 1802114100,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00087L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6918,
+      "lastWriteTime": 1781103720,
+      "retainDataUntil": 1802114100,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00034L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6919,
+      "lastWriteTime": 1783447980,
+      "retainDataUntil": 1802114100,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00086L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6920,
+      "lastWriteTime": 1784704680,
+      "retainDataUntil": 1802114100,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00088L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6921,
+      "lastWriteTime": 1786067940,
+      "retainDataUntil": 1802114100,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00100L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6922,
+      "lastWriteTime": 1776654000,
+      "retainDataUntil": 1799613000,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00140L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-S",
+        "id": 139
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 168
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6923,
+      "lastWriteTime": 1777676400,
+      "retainDataUntil": 1799613000,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00141L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-S",
+        "id": 139
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 168
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6924,
+      "lastWriteTime": 1783252800,
+      "retainDataUntil": 1814727600,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00160L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Stock",
+        "id": 132
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 161
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6925,
+      "lastWriteTime": 1755676800,
+      "retainDataUntil": 0,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00032L8",
+      "status": "Aged Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6926,
+      "lastWriteTime": 1756800000,
+      "retainDataUntil": 0,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00035L8",
+      "status": "Aged Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6927,
+      "lastWriteTime": 1757491200,
+      "retainDataUntil": 0,
+      "isInMediaGroup": true,
+      "isExported": true,
+      "guiMediaAttribute": 2,
+      "barcode": "K00036L8",
+      "status": "Aged Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-S",
+        "id": 139
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 168
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    }
+  ]
+}

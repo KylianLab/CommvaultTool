@@ -1,0 +1,592 @@
+{
+  "mediaDetailsList": [
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6901,
+      "lastWriteTime": 1789877520,
+      "retainDataUntil": 1812825660,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00120L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 5",
+        "id": 369373
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6902,
+      "lastWriteTime": 1790975100,
+      "retainDataUntil": 1812825660,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00121L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 6",
+        "id": 369374
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 6000000000000,
+      "mediaId": 6903,
+      "lastWriteTime": 1791922200,
+      "retainDataUntil": 1812825660,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00122L8",
+      "status": "Active Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 7",
+        "id": 369375
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 9000000000000,
+      "mediaId": 6904,
+      "lastWriteTime": 1791964500,
+      "retainDataUntil": 1815508980,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00150L8",
+      "status": "Active Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-S",
+        "id": 139
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 22",
+        "id": 369390
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 168
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "IBM ULT3580-HH9_1",
+        "id": 101
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 18000000000000,
+      "mediaId": 6905,
+      "lastWriteTime": 1791939600,
+      "retainDataUntil": 1815508980,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00151L8",
+      "status": "Full Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-S",
+        "id": 139
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 23",
+        "id": 369391
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 168
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 4500000000000,
+      "mediaId": 6906,
+      "lastWriteTime": 1783305000,
+      "retainDataUntil": 1814727600,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00161L8",
+      "status": "Appendable Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Stock",
+        "id": 132
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 41",
+        "id": 369409
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 161
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6907,
+      "lastWriteTime": 1764666000,
+      "retainDataUntil": 0,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00047L8",
+      "status": "Aged Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 44",
+        "id": 369412
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 1,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6908,
+      "lastWriteTime": 0,
+      "retainDataUntil": 0,
+      "isInMediaGroup": false,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00170L8",
+      "status": "Spare Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "",
+        "id": 0
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 45",
+        "id": 369413
+      },
+      "storagePolicyCopy": {
+        "name": "",
+        "id": 0
+      },
+      "spareGroup": {
+        "id": 230,
+        "name": "Default Scratch"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 1,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6909,
+      "lastWriteTime": 0,
+      "retainDataUntil": 0,
+      "isInMediaGroup": false,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00171L8",
+      "status": "Spare Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "",
+        "id": 0
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 46",
+        "id": 369414
+      },
+      "storagePolicyCopy": {
+        "name": "",
+        "id": 0
+      },
+      "spareGroup": {
+        "id": 230,
+        "name": "Default Scratch"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 1,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6910,
+      "lastWriteTime": 0,
+      "retainDataUntil": 0,
+      "isInMediaGroup": false,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00172L8",
+      "status": "Spare Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "",
+        "id": 0
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 47",
+        "id": 369415
+      },
+      "storagePolicyCopy": {
+        "name": "",
+        "id": 0
+      },
+      "spareGroup": {
+        "id": 230,
+        "name": "Default Scratch"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 1,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6911,
+      "lastWriteTime": 0,
+      "retainDataUntil": 0,
+      "isInMediaGroup": false,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00173L8",
+      "status": "Spare Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "",
+        "id": 0
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 48",
+        "id": 369416
+      },
+      "storagePolicyCopy": {
+        "name": "",
+        "id": 0
+      },
+      "spareGroup": {
+        "id": 230,
+        "name": "Default Scratch"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 1,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6912,
+      "lastWriteTime": 0,
+      "retainDataUntil": 0,
+      "isInMediaGroup": false,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00174L8",
+      "status": "Spare Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "",
+        "id": 0
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 49",
+        "id": 369417
+      },
+      "storagePolicyCopy": {
+        "name": "",
+        "id": 0
+      },
+      "spareGroup": {
+        "id": 230,
+        "name": "Default Scratch"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 1000,
+      "mediaId": 6913,
+      "lastWriteTime": 1780308000,
+      "retainDataUntil": 1802114100,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "K00099L8",
+      "status": "Bad Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "SP_VSP_Online-N",
+        "id": 138
+      },
+      "mediaType": {
+        "name": "ULTRIUM V9",
+        "id": 2011
+      },
+      "slot": {
+        "name": "slot 50",
+        "id": 369418
+      },
+      "storagePolicyCopy": {
+        "name": "Master",
+        "id": 167
+      },
+      "spareGroup": {
+        "id": 236,
+        "name": "LTO9"
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    },
+    {
+      "libraryName": "",
+      "spareGroupType": 2,
+      "libraryId": 36,
+      "storedDataBytes": 0,
+      "mediaId": 6914,
+      "lastWriteTime": 0,
+      "retainDataUntil": 0,
+      "isInMediaGroup": true,
+      "isExported": false,
+      "guiMediaAttribute": 2,
+      "barcode": "CLN001CU",
+      "status": "Cleaning Media",
+      "container": {
+        "name": "",
+        "id": 0
+      },
+      "storagePolicy": {
+        "name": "",
+        "id": 0
+      },
+      "mediaType": {
+        "name": "ULTRIUM Cleaning Tape",
+        "id": 160
+      },
+      "slot": {
+        "name": "slot 60",
+        "id": 369428
+      },
+      "storagePolicyCopy": {
+        "name": "",
+        "id": 0
+      },
+      "spareGroup": {
+        "name": "Cleaning Media",
+        "id": 235
+      },
+      "drive": {
+        "name": "",
+        "id": 0
+      }
+    }
+  ]
+}

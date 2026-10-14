@@ -1,0 +1,58 @@
+{
+  "libraryInfo": {
+    "library": {
+      "libraryName": "IBM VSP",
+      "libraryId": 36
+    },
+    "model": "3573-TL",
+    "libraryType": 1,
+    "tapeLibSummary": {
+      "numOfRegSlots": 60,
+      "numOfRegSlotOccupied": 14,
+      "numOfMedia": 27,
+      "isOnline": "Yes"
+    },
+    "DriveList": [
+      {
+        "driveName": "IBM ULT3580-HH9_1",
+        "driveId": 101,
+        "driveType": "ULTRIUM-V9",
+        "status": "Ready",
+        "mountStatus": "Media Mounted",
+        "barcode": "K00150L8",
+        "mediaId": 6904,
+        "jobIds": "284500"
+      },
+      {
+        "driveName": "IBM ULT3580-HH9_2",
+        "driveId": 102,
+        "driveType": "ULTRIUM-V9",
+        "status": "Ready",
+        "mountStatus": "Drive Empty",
+        "barcode": "",
+        "mediaId": 0,
+        "jobIds": ""
+      },
+      {
+        "driveName": "IBM ULT3580-HH9_3",
+        "driveId": 103,
+        "driveType": "ULTRIUM-V9",
+        "status": "Ready",
+        "mountStatus": "Drive Empty",
+        "barcode": "",
+        "mediaId": 0,
+        "jobIds": ""
+      },
+      {
+        "driveName": "IBM ULT3580-HH9_4",
+        "driveId": 104,
+        "driveType": "ULTRIUM-V9",
+        "status": "Ready",
+        "mountStatus": "Drive Empty",
+        "barcode": "",
+        "mediaId": 0,
+        "jobIds": ""
+      }
+    ]
+  }
+}
