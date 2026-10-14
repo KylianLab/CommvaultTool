@@ -37,9 +37,12 @@ ENV APP_ENV=prod \
 RUN composer install --prefer-dist --no-scripts --no-autoloader --no-dev
 COPY . .
 RUN composer dump-autoload --no-dev --classmap-authoritative \
-    && mkdir -p var/discovery var/log var/commvault \
+    && php bin/console tailwind:build --minify \
+    && php bin/console asset-map:compile \
+    && rm -rf var/cache/* \
+    && mkdir -p var/discovery var/log var/commvault var/data \
     && chown -R app:app var
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 USER app
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh", "php", "bin/console"]
-CMD ["list", "app"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php", "bin/console", "list", "app"]

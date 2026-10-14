@@ -8,11 +8,16 @@
     .\docker\wslc.ps1 discover --list       # endpoints that would be called
     .\docker\wslc.ps1 discover -vv          # discovery -> var\discovery\
     .\docker\wslc.ps1 summary               # structure of all dumps -> var\discovery\_schema.md
+    .\docker\wslc.ps1 app                   # web preview on http://localhost:8000, demo data
+    .\docker\wslc.ps1 app -Real             # web preview synchronised with the real CommServe
 #>
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet('build', 'test', 'discover', 'summary')]
+    [ValidateSet('build', 'test', 'discover', 'summary', 'app')]
     [string] $Action,
+
+    # 'app' only: use the real CommServe (docker\tapetrack.env + secrets) instead of the demo data
+    [switch] $Real,
 
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]] $Arguments = @()
@@ -44,12 +49,37 @@ try {
                 -v "$p/var/discovery:/app/var/discovery" `
                 -v "$p/var/log:/app/var/log" `
                 -v "$p/var/commvault:/app/var/commvault" `
-                tapetrack:prod app:commvault:discover @Arguments
+                tapetrack:prod php bin/console app:commvault:discover @Arguments
+        }
+        'app' {
+            $p = $root -replace '\\', '/'
+            New-Item -ItemType Directory -Force var\data, var\log, var\commvault | Out-Null
+            # SQLite preview database: demo and real data must not mix
+            $db = if ($Real) { 'tapetrack-real.db' } else { 'tapetrack-demo.db' }
+            $common = @(
+                '-p', '8000:8000',
+                '-e', "DATABASE_URL=sqlite:////app/var/data/$db",
+                '-e', 'MESSENGER_TRANSPORT_DSN=sync://',
+                '-v', "$p/var/data:/app/var/data",
+                '-v', "$p/var/log:/app/var/log"
+            )
+            if ($Real) {
+                foreach ($required in 'docker\tapetrack.env', 'docker\secrets\commvault_password') {
+                    if (-not (Test-Path $required)) { throw "Fichier manquant : $required (voir README)." }
+                }
+                $common += @('--env-file', 'docker/tapetrack.env',
+                    '-v', "$p/docker/secrets:/run/secrets", '-v', "$p/docker/certs:/certs",
+                    '-v', "$p/var/commvault:/app/var/commvault")
+            } else {
+                $common += @('-e', 'COMMVAULT_CLIENT=fake')
+            }
+            Write-Host 'TapeTrack : http://localhost:8000  (Ctrl+C pour arreter)'
+            wslc run --rm -it @common tapetrack:prod sh docker/preview.sh
         }
         'summary' {
             $p = $root -replace '\\', '/'
             wslc run --rm -v "$p/var/discovery:/app/var/discovery" `
-                tapetrack:prod app:commvault:discovery-summary @Arguments
+                tapetrack:prod php bin/console app:commvault:discovery-summary @Arguments
         }
     }
     exit $LASTEXITCODE
