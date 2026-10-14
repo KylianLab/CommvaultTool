@@ -8,8 +8,9 @@
     .\docker\wslc.ps1 discover --list       # endpoints that would be called
     .\docker\wslc.ps1 discover -vv          # discovery -> var\discovery\
     .\docker\wslc.ps1 summary               # structure of all dumps -> var\discovery\_schema.md
-    .\docker\wslc.ps1 app                   # web preview on http://localhost:8000, demo data
+    .\docker\wslc.ps1 app                   # web preview on http://localhost:8080, demo data
     .\docker\wslc.ps1 app -Real             # web preview synchronised with the real CommServe
+    .\docker\wslc.ps1 app -Port 18080       # another local port (if 8080 is reserved / used)
 #>
 param(
     [Parameter(Mandatory = $true, Position = 0)]
@@ -18,6 +19,10 @@ param(
 
     # 'app' only: use the real CommServe (docker\tapetrack.env + secrets) instead of the demo data
     [switch] $Real,
+
+    # 'app' only: port on this PC. Some ranges are reserved by Hyper-V / WSL
+    # ("netsh interface ipv4 show excludedportrange protocol=tcp").
+    [int] $Port = 8080,
 
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]] $Arguments = @()
@@ -57,7 +62,7 @@ try {
             # SQLite preview database: demo and real data must not mix
             $db = if ($Real) { 'tapetrack-real.db' } else { 'tapetrack-demo.db' }
             $common = @(
-                '-p', '8000:8000',
+                '-p', "${Port}:8000",
                 '-e', "DATABASE_URL=sqlite:////app/var/data/$db",
                 '-e', 'MESSENGER_TRANSPORT_DSN=sync://',
                 '-v', "$p/var/data:/app/var/data",
@@ -73,7 +78,7 @@ try {
             } else {
                 $common += @('-e', 'COMMVAULT_CLIENT=fake')
             }
-            Write-Host 'TapeTrack : http://localhost:8000  (Ctrl+C pour arreter)'
+            Write-Host "TapeTrack : http://localhost:$Port  (Ctrl+C pour arreter)"
             wslc run --rm -it @common tapetrack:prod sh docker/preview.sh
         }
         'summary' {

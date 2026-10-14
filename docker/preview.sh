@@ -16,6 +16,6 @@ fi
 php bin/console messenger:consume scheduler_default --time-limit=86400 -q &
 
 echo ""
-echo "  TapeTrack : http://localhost:8000"
+echo "  TapeTrack démarré (port 8000 du container ; voir l'URL affichée par wslc.ps1)"
 echo ""
 exec php -S 0.0.0.0:8000 -t public

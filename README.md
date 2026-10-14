@@ -15,8 +15,9 @@ Stack : PHP 8.4, Symfony 7.4 LTS, Doctrine/MariaDB, Twig + Symfony UX (phases su
 
 ```powershell
 .\docker\wslc.ps1 build
-.\docker\wslc.ps1 app          # données de démo -> http://localhost:8000
+.\docker\wslc.ps1 app          # données de démo -> http://localhost:8080
 .\docker\wslc.ps1 app -Real    # données réelles du CommServe (docker\tapetrack.env + secret)
+.\docker\wslc.ps1 app -Port 18080   # si le port 8080 est réservé ou occupé (WSAEACCES)
 ```
 
 Pour cet aperçu, la base est un fichier SQLite dans `var\data\`, distinct pour la démo et pour les données réelles. La synchro tourne toutes les 15 min tant que l'aperçu est ouvert. La production utilise MariaDB, Nginx/PHP-FPM et le worker systemd.
