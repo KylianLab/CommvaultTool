@@ -45,7 +45,14 @@ class StorageLocation
     public function getName(): string { return $this->name; }
     public function setName(string $name): void { $this->name = $name; }
     public function getCabinet(): ?Cabinet { return $this->cabinet; }
-    public function setCabinet(?Cabinet $cabinet): void { $this->cabinet = $cabinet; }
+    public function setCabinet(?Cabinet $cabinet): void
+    {
+        $this->cabinet?->getLocations()->removeElement($this);
+        $this->cabinet = $cabinet;
+        if (null !== $cabinet && !$cabinet->getLocations()->contains($this)) {
+            $cabinet->getLocations()->add($this);
+        }
+    }
     public function getShelf(): ?string { return $this->shelf; }
     public function setShelf(?string $shelf): void { $this->shelf = $shelf; }
     public function getPosition(): ?int { return $this->position; }
