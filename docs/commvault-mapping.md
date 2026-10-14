@@ -278,8 +278,17 @@ Sur l'exemple réel, toutes les tapes d'une fiche partagent la même rétention.
 - Date « BackUp » : celle du premier job `Full` de la copie dont `retainUntil` tombe le même jour. Si aucun job ne correspond, la case reste vide et une alerte s'affiche.
 - Une tape dont la rétention ne correspond à aucune fiche existante est signalée comme incohérente.
 
-## 11. Questions ouvertes
+## 11. Décisions complémentaires (14/10/2026)
 
-1. **`Active Media` / `Appendable Media`** : VSP compte 33 tapes « Active » pour seulement 4 lecteurs, donc « Active » ne veut pas dire « en cours d'écriture ». Quelle différence faites-vous entre les deux ? Les deux sont-elles « non pleines, à laisser dans la TL » ?
-2. **Tiroirs** : quelles plages de slots de la bibliothèque VSP (1 à 60) correspondent à chacun des 4 tiroirs ? La valeur sera saisie dans l'admin, mais une valeur par défaut serait utile.
-3. **Fiche** : faut-il une fiche par (copie, date de rétention), même si plusieurs clients y ont écrit ?
+1. **Statuts** :
+   - `Active Media` : la tape contient des données à conserver. **Hypothèse à confirmer** : ce n'est pas un indicateur d'écriture en cours.
+   - `Appendable Media` : la tape peut encore recevoir des données.
+   - Une tape en cours d'écriture se détecte par `DriveList` et par les jobs actifs, et non par son statut.
+2. **Tiroirs** : la TL physique a 80 slots en 4 tiroirs de 20 (1-20, 21-40, 41-60, 61-80).
+   - **IBM VSP**, slots logiques 1 à 60 : tiroir 1 = slots 1-20, tiroir 2 = 21-40, tiroir 3 = 41-60.
+   - **IBM INFRA**, slots logiques 1 à 20 : tiroir 4.
+   - Le mapping slot → tiroir est donc **défini par bibliothèque logique**. Ces valeurs servent de défaut et restent modifiables dans l'admin.
+3. **Fiche** : une fiche par **storage policy** (sa copie sur bande) et par **date de rétention**.
+4. **Constat sur la copie 167** (`SP_VSP_Online-N` / `Master`) : elle ne contient que des jobs `Full` (3 sur 120 jours).
+   - Un « backup » correspond donc en pratique à un Full, éventuellement écrit sur plusieurs tapes et sur plusieurs semaines.
+   - La date « BackUp » est celle de ce Full.
