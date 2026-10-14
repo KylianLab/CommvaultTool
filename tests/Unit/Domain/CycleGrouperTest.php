@@ -127,4 +127,18 @@ final class CycleGrouperTest extends TestCase
         self::assertSame([], $byKey['full:2']->anomalies);
         self::assertSame(['K0'], array_map(static fn ($m) => $m->getBarcode(), $byKey['full:none']->media));
     }
+
+    public function testRunningFullGivesTheBackupDate(): void
+    {
+        $copy = Factory::copy();
+        $groups = (new CycleGrouper())->group(CycleGrouping::Retention, [
+            Factory::media('K1', copy: $copy, lastWrite: '2026-10-14 03:00', retainUntil: '2027-07-13 22:03'),
+        ], [
+            Factory::job(1, $copy, 'Full', '2026-04-11 21:00', '2027-01-10 21:00'), // previous backup
+        ], [284500 => Factory::at('2026-10-13 22:00')]);
+
+        self::assertSame(284500, $groups[0]->runningFullId);
+        self::assertSame('13/10/2026 22:00', $groups[0]->backupDate()->setTimezone(new \DateTimeZone('Europe/Brussels'))->format('d/m/Y H:i'));
+        self::assertSame([], $groups[0]->anomalies);
+    }
 }

@@ -21,19 +21,26 @@ use App\Enum\CycleGrouping;
  */
 final class CycleGrouper
 {
+    /** @var array<int, \DateTimeImmutable> */
+    private array $runningFulls = [];
+
     public function __construct(
         private readonly \DateTimeZone $timezone = new \DateTimeZone('Europe/Brussels'),
     ) {
     }
 
     /**
-     * @param list<Media>     $media tapes of the copy that hold data
-     * @param list<BackupJob> $jobs  jobs of the same copy
+     * @param list<Media>                     $media        tapes of the copy that hold data
+     * @param list<BackupJob>                 $jobs         jobs of the same copy
+     * @param array<int, \DateTimeImmutable>  $runningFulls Full jobs running now on the copy's storage
+     *                                                      policy (job id => start): not on the copy yet
      *
      * @return list<CycleGroup>
      */
-    public function group(CycleGrouping $strategy, array $media, array $jobs): array
+    public function group(CycleGrouping $strategy, array $media, array $jobs, array $runningFulls = []): array
     {
+        $this->runningFulls = $runningFulls;
+
         $fulls = array_values(array_filter($jobs, static fn (BackupJob $j) => $j->isFull() && null !== $j->getStartAt()));
         usort($fulls, static fn (BackupJob $a, BackupJob $b) => $a->getStartAt() <=> $b->getStartAt());
 
@@ -81,6 +88,21 @@ final class CycleGrouper
 
             if (null === $group->fullJob) {
                 $firstWrite = $this->firstWrite($group->media);
+
+                // A Full still running: it is not listed on the copy yet, and its
+                // retention is only final when it ends. Its start is the BackUp date.
+                $running = null;
+                foreach ($this->runningFulls as $jobId => $start) {
+                    if (null !== $firstWrite && $start <= $firstWrite && (null === $running || $start > $running[1])) {
+                        $running = [$jobId, $start];
+                    }
+                }
+                if (null !== $running) {
+                    [$group->runningFullId, $group->runningFullStart] = $running;
+
+                    continue;
+                }
+
                 $candidate = null;
                 foreach ($fulls as $full) {
                     if (null !== $firstWrite && $full->getStartAt() <= $firstWrite) {
@@ -141,7 +163,7 @@ final class CycleGrouper
 
     private function checkWritesAfterFull(CycleGroup $group): void
     {
-        $start = $group->fullJob?->getStartAt();
+        $start = $group->backupDate();
         if (null === $start) {
             return;
         }

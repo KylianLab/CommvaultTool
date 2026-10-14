@@ -112,6 +112,12 @@ final class SynchronizerTest extends DatabaseTestCase
 
         self::assertSame(['K00120L8', 'K00121L8', 'K00122L8'], array_map(static fn (Media $m) => $m->getBarcode(), $cycles[1]->getMedia()->toArray()));
 
+        // Online S: its Full is still running (job 284500), not yet listed on the copy
+        $onlineS = $this->em->getRepository(StoragePolicyCopy::class)->findOneBy(['commvaultId' => 168]);
+        $current = $this->em->getRepository(BackupCycle::class)->findOneBy(['copy' => $onlineS, 'groupKey' => 'ret:2027-07-13']);
+        self::assertSame('13/10/2026 22:00', $current->getBackupDate()->setTimezone($tz)->format('d/m/Y H:i'));
+        self::assertSame([], $current->getAnomalies());
+
         $links = $this->em->getRepository(JobMedia::class)->findBy(['job' => $sheet->getFullJob()]);
         self::assertCount(7, $links);
         self::assertTrue($links[0]->isInferred());

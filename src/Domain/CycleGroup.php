@@ -15,6 +15,10 @@ final class CycleGroup
     /** @var list<string> */
     public array $anomalies = [];
 
+    /** Full still running (not yet listed on the copy): its start is the BackUp date. */
+    public ?int $runningFullId = null;
+    public ?\DateTimeImmutable $runningFullStart = null;
+
     /**
      * @param list<Media> $media
      */
@@ -28,6 +32,6 @@ final class CycleGroup
 
     public function backupDate(): ?\DateTimeImmutable
     {
-        return $this->fullJob?->getStartAt();
+        return $this->runningFullStart ?? $this->fullJob?->getStartAt();
     }
 }

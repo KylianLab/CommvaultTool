@@ -174,11 +174,15 @@ final class CommvaultSynchronizer
 
         // 5. Running jobs: a policy with a running job is "busy" -----------------
         $busyPolicies = null; // null = unknown => every policy considered busy
+        $runningFulls = []; // storagePolicyId => [jobId => start]
         try {
             $busyPolicies = [];
             foreach ($this->gateway->activeJobs() as $job) {
                 if (null !== $job->storagePolicyId) {
                     $busyPolicies[$job->storagePolicyId] = true;
+                    if (\in_array($job->jobType, [BackupJob::TYPE_FULL, BackupJob::TYPE_SYNTHETIC_FULL], true) && null !== $job->startAt) {
+                        $runningFulls[$job->storagePolicyId][$job->jobId] = $job->startAt;
+                    }
                 }
             }
             $this->stats['active_jobs'] = \count($busyPolicies);
@@ -193,7 +197,7 @@ final class CommvaultSynchronizer
 
         // 6. Computed state ------------------------------------------------------
         $this->computeFlags($managed, $busyPolicies, $now);
-        $this->computeCycles($mediaByCopy, $jobsByCopy, $now);
+        $this->computeCycles($mediaByCopy, $jobsByCopy, $runningFulls, $now);
     }
 
     /**
@@ -331,10 +335,11 @@ final class CommvaultSynchronizer
     }
 
     /**
-     * @param array<int, list<Media>>     $mediaByCopy
-     * @param array<int, list<BackupJob>> $jobsByCopy
+     * @param array<int, list<Media>>                         $mediaByCopy
+     * @param array<int, list<BackupJob>>                     $jobsByCopy
+     * @param array<int, array<int, \DateTimeImmutable>>      $runningFulls by storage policy id
      */
-    private function computeCycles(array $mediaByCopy, array $jobsByCopy, \DateTimeImmutable $now): void
+    private function computeCycles(array $mediaByCopy, array $jobsByCopy, array $runningFulls, \DateTimeImmutable $now): void
     {
         $cycles = 0;
         foreach ($mediaByCopy as $copyId => $media) {
@@ -344,7 +349,7 @@ final class CommvaultSynchronizer
             }
             $copy = $withData[0]->getCopy();
             $jobs = $jobsByCopy[$copyId] ?? [];
-            $groups = $this->cycleGrouper->group($this->settings->cycleGrouping, $withData, $jobs);
+            $groups = $this->cycleGrouper->group($this->settings->cycleGrouping, $withData, $jobs, $runningFulls[$copy->getPolicy()->getCommvaultId()] ?? []);
 
             $grouped = [];
             foreach ($groups as $group) {
