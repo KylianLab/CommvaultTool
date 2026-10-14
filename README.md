@@ -24,4 +24,26 @@ vendor/bin/phpunit
 
 Avec `COMMVAULT_CLIENT=fake` (valeur par défaut), aucune connexion au CommServe n'est faite.
 
+## En container (Docker Desktop / Podman Desktop sous WSL)
+
+Pas besoin de PHP sur la machine : tout tourne dans une image PHP 8.4.
+
+```bash
+cp docker/tapetrack.env.dist docker/tapetrack.env      # URL du CommServe, mode d'auth
+printf '%s' 'mot-de-passe-api_sa' > docker/secrets/commvault_password
+cp /chemin/ca-interne.pem docker/certs/ca.pem           # CA AD CS (sinon vider COMMVAULT_CA_BUNDLE)
+mkdir -p var/discovery var/log
+
+docker compose build
+docker compose run --rm test                  # tests, sans réseau
+docker compose run --rm discover --list       # ce qui sera appelé
+docker compose run --rm discover -vv          # découverte -> ./var/discovery/
+```
+
+- Le mot de passe est lu comme *secret* compose (`/run/secrets/commvault_password`) et n'apparaît ni dans l'image, ni dans `docker inspect`. `docker/secrets/`, `docker/certs/` et `docker/tapetrack.env` sont ignorés par git.
+- Le container tourne avec l'UID 1000 (utilisateur WSL par défaut) : les dumps de `var/discovery` vous appartiennent. Autre UID : `docker compose build --build-arg UID=$(id -u)`.
+- La paire d'access tokens renouvelée est conservée dans le volume `commvault-state` (les refresh tokens sont à usage unique).
+- Le CommServe doit être joignable depuis WSL : vérifier avec `curl -v https://<commserve>/commandcenter/api/` dans WSL. Derrière un VPN, le mode réseau *mirrored* de WSL (`networkingMode=mirrored` dans `.wslconfig`) aide souvent.
+- Avec Podman : `podman compose` à la place de `docker compose`.
+
 Le README complet (déploiement Ubuntu/Nginx, worker systemd, synchro) sera rédigé dans les phases suivantes.

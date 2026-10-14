@@ -1,0 +1,43 @@
+# TapeTrack containers (Docker Desktop / Podman Desktop on WSL).
+#
+#   1. cp docker/tapetrack.env.dist docker/tapetrack.env   (and adapt it)
+#   2. put the api_sa password in docker/secrets/commvault_password
+#   3. optional: internal CA (PEM) in docker/certs/ca.pem
+#   4. mkdir -p var/discovery var/log
+#   5. docker compose run --rm discover --list
+#      docker compose run --rm discover -vv
+#
+#   docker compose run --rm test      # test suite, no network needed
+services:
+  discover:
+    build:
+      context: .
+      target: prod
+    image: tapetrack:prod
+    env_file: docker/tapetrack.env
+    entrypoint: ["/usr/local/bin/entrypoint.sh", "php", "bin/console", "app:commvault:discover"]
+    command: []
+    secrets:
+      - commvault_password
+    volumes:
+      - ./var/discovery:/app/var/discovery
+      - ./var/log:/app/var/log
+      - ./docker/certs:/certs:ro
+      # renewed access-token pair (refresh tokens are single-use): must survive the container
+      - commvault-state:/app/var/commvault
+
+  test:
+    build:
+      context: .
+      target: dev
+    image: tapetrack:dev
+    environment:
+      COMMVAULT_CLIENT: fake
+
+
+secrets:
+  commvault_password:
+    file: ./docker/secrets/commvault_password
+
+volumes:
+  commvault-state:

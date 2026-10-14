@@ -13,3 +13,11 @@
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
+
+###> docker ###
+/docker/secrets/*
+!/docker/secrets/.gitkeep
+/docker/certs/*
+!/docker/certs/.gitkeep
+/docker/tapetrack.env
+###< docker ###

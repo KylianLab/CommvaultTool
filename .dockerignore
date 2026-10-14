@@ -1,0 +1,10 @@
+.git
+vendor
+var
+.env.local
+.env.*.local
+docker/secrets
+docker/certs
+docker/tapetrack.env
+config/secrets/prod/prod.decrypt.private.php
+.phpunit.cache
