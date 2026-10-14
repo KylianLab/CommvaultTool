@@ -180,14 +180,36 @@ Les champs qui ressemblent à des secrets (`token`, `password`…) sont masqués
 
 ---
 
-## 8. Questions ouvertes (à trancher avant la Phase 2)
+## 8. Premiers résultats sur le CommServe (14/10/2026)
 
-1. **Statuts média** : quelles valeurs de `status` correspondent à « pleine », « appendable », « aged », « scratch » ? Les dumps `media.*` donneront la liste réelle.
-2. **Rétention de la fiche** : quelle source prendre ?
-   - `retainDataUntil` de la tape ;
-   - `retainUntil` du Full sur la copie.
-   Proposition : la tape, avec une alerte si les deux divergent.
-3. **Fin de cycle** : sur une copie « Online N », les Full de tous les clients/subclients tombent-ils le même week-end, ou faut-il un cycle par subclient ? Le premier Full rencontré ouvre-t-il le cycle ?
-4. **QCommands** : `api_sa` a-t-il le droit d'appeler `ExecuteQCommand`, et l'usage de `qlist media` (lecture seule) est-il acceptable chez vous ?
-5. **Site externe / Vault Tracker** : des export locations ou des politiques Vault Tracker sont-elles configurées dans Commvault ?
-6. **TL IBM** : quel modèle (TS4300 ?), combien de slots par tiroir, et les slots sont-ils nommés comme l'element address ?
+Découverte lancée contre le CommServe de production en 11.40, avec le compte `api_sa` associé en lecture seule (rôle *View*).
+
+| Point | Constat |
+|---|---|
+| Login `POST /Login` + `Authtoken`, TLS avec la CA interne | ✅ |
+| `GET /V4/Storage/Tape` | ✅ renvoie `tapeStorage[]` (et non `tapeList[]`). Deux bibliothèques logiques : `IBM INFRA` (26) et `IBM VSP` (36), modèle IBM 3573-TL |
+| `GET /V4/Library/{id}/Media?filterMediaType=…&isExported=…` | ✅ réponses obtenues, champs à valider avec `_schema.md` |
+| `GET /V4/Library/{id}/Slot?slotType=…` | ❌ HTTP 400, paramètre à corriger |
+| `GET /StoragePolicy`, `/V2/StoragePolicy/{id}/Copy/{copyId}` | ✅ |
+| `GET /V4/Plan/BackupDestination/{copyId}/Jobs` | ✅. Les filtres `backupLvl` / `backupLevel` sont **ignorés** : le niveau devra venir d'ailleurs |
+| `GET /Job`, `POST /Jobs`, `POST /JobDetails`, `GET /Job/{id}/AdvancedDetails` | ✅ |
+| `GET /V4/Storage/Tape/Locations` | ✅ mais **non utilisé** (voir décisions) |
+| `GET /V4/VaultTracker/Media` | ❌ 403. **Non nécessaire** (Vault Tracker inutilisé) |
+| `POST /ExecuteQCommand` | ❌ 404 sous `/commandcenter/api` |
+| `POST /QCommand/<cmd>` | ❌ 400 « Invalid command » |
+| `GET /WhoAmI`, `GET /V4/Plan/BackupDestinations` | ❌ 403, non nécessaires |
+
+## 9. Décisions validées
+
+1. **Périmètre** : une seule TL physique, découpée en deux bibliothèques logiques. Seule **`IBM VSP` (36)** est gérée par TapeTrack pour l'instant. Les bibliothèques gérées seront configurables.
+2. **Storage policies** : la fiche « Online N » correspond à la policy **`SP_VSP_Online-N`** et à sa copie sur bande. Les policies `PowerScale` correspondent à l'ancien stockage, hors périmètre.
+3. **Emplacements** : les export locations et le Vault Tracker de Commvault **ne sont plus utilisés**. Le référentiel physique vit dans TapeTrack, selon la hiérarchie **site › local › armoire › étagère** (ex. `+6I21` › `SB1` › `Sh3`). **Perron-LesBinches** est le site externe.
+4. **Date « Retention » de la fiche** : on prend `retainDataUntil` de la tape, avec une alerte si cette date diverge de la rétention du job Full du cycle.
+5. **Cycles** : chaque client a sa propre schedule policy. Il n'existe donc pas un unique Full par copie qui ouvrirait le cycle (voir la question 1 ci-dessous).
+
+## 10. Questions ouvertes
+
+1. **Regroupement en fiches** : comme les clients ont des Full à des dates différentes, faut-il regrouper par **date de rétention des tapes** (copie + rétention) ? La date « BackUp » serait alors celle du premier Full du groupe. À confirmer après avoir vu les jobs de `SP_VSP_Online-N` : combien de clients et de subclients.
+2. **Statuts média** : valeurs réelles à lire dans `_schema.md`.
+3. **Slots et tiroirs** : comment les slots de la partition `IBM VSP` se répartissent-ils sur les 4 tiroirs physiques ? Numérotation propre à la partition, ou numéros de la TL physique ?
+4. **Relation job ↔ tape** : les QCommands sont indisponibles par l'API. Il faut regarder si `JobDetails` ou les listes de médias donnent ce lien, sinon passer par l'approximation copie + dates.
