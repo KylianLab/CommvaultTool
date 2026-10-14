@@ -7,10 +7,11 @@
     .\docker\wslc.ps1 test                  # test suite (no network)
     .\docker\wslc.ps1 discover --list       # endpoints that would be called
     .\docker\wslc.ps1 discover -vv          # discovery -> var\discovery\
+    .\docker\wslc.ps1 summary               # structure of all dumps -> var\discovery\_schema.md
 #>
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet('build', 'test', 'discover')]
+    [ValidateSet('build', 'test', 'discover', 'summary')]
     [string] $Action,
 
     [Parameter(ValueFromRemainingArguments = $true)]
@@ -44,6 +45,11 @@ try {
                 -v "$p/var/log:/app/var/log" `
                 -v "$p/var/commvault:/app/var/commvault" `
                 tapetrack:prod app:commvault:discover @Arguments
+        }
+        'summary' {
+            $p = $root -replace '\\', '/'
+            wslc run --rm -v "$p/var/discovery:/app/var/discovery" `
+                tapetrack:prod app:commvault:discovery-summary @Arguments
         }
     }
     exit $LASTEXITCODE
